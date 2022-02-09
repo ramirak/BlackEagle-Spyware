@@ -2,7 +2,7 @@
 #include <errhandlingapi.h>
 #include <string>
 
-DWORD sendReq() {
+DWORD SendRequest(LPCWSTR additionalHeaders, char* optionalData, LPCWSTR apiUrl, LPCWSTR method) {
 	DWORD dwSize = 0;
 	DWORD dwDownloaded = 0;
 	LPSTR pszOutBuffer;
@@ -10,10 +10,6 @@ DWORD sendReq() {
 	HINTERNET  hSession = NULL,
 		hConnect = NULL,
 		hRequest = NULL;
-
-	LPCWSTR additionalHeaders =
-		L"Accept:application/json\r\nContent-Type:application/json\r\n\r\n";
-	char postData[] = "{\"uid\":\"1c073427-04de-4289-bcb2-3175d7adbe09\",\"password\":\"Cpfxt7hMPUdXn6fna9IeKQDA9Fu+9Wyr9YUxwLa6qB4=\"}\r\n";
 
 	// Use WinHttpOpen to obtain a session handle.
 	hSession = WinHttpOpen(L"WinHTTP",
@@ -23,14 +19,14 @@ DWORD sendReq() {
 
 	// Specify an HTTP server. 
 	if (hSession)
-		hConnect = WinHttpConnect(hSession, L"localhost",
-			8010, 0);
+		hConnect = WinHttpConnect(hSession, HOST,
+			PORT_NUM, 0);
 
 	DWORD errorMessageID = ::GetLastError();
 
 	// Create an HTTP request handle.
 	if (hConnect)
-		hRequest = WinHttpOpenRequest(hConnect, L"POST", L"/login",
+		hRequest = WinHttpOpenRequest(hConnect, method, apiUrl,
 			NULL, WINHTTP_NO_REFERER, 
 			WINHTTP_DEFAULT_ACCEPT_TYPES,
 			WINHTTP_FLAG_SECURE); 
@@ -48,8 +44,8 @@ DWORD sendReq() {
 	if (hRequest)
 		bResults = WinHttpSendRequest(hRequest,
 			additionalHeaders, -1, 
-			(LPVOID)postData, strlen(postData),
-			strlen(postData), 0);
+			optionalData, strlen(optionalData),
+			strlen(optionalData), 0);
 
 	errorMessageID = ::GetLastError();
 
