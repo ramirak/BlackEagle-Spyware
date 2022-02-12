@@ -6,4 +6,4 @@
 
 #define HOST L"localhost"
 #define PORT_NUM 8010
-DWORD SendRequest(LPCWSTR additionalHeaders, char* optionalData, LPCWSTR apiUrl, LPCWSTR method);
+LPSTR SendRequest(LPCWSTR additionalHeaders, char* optionalData, LPCWSTR apiUrl, LPCWSTR method);

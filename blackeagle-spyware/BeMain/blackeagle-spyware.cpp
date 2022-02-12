@@ -13,10 +13,11 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     LPCWSTR apiUrl = L"/login";
     LPCWSTR method = L"POST";
     
-    SendRequest(additionalHeaders,postData,apiUrl,method);
-          
+
+ //   SendRequest(additionalHeaders,postData,apiUrl,method);
+   
     ProtectProcess();
-   // runThreads();
+    runThreads();
     return 0;
 }
 

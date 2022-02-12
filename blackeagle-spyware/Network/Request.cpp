@@ -2,10 +2,10 @@
 #include <errhandlingapi.h>
 #include <string>
 
-DWORD SendRequest(LPCWSTR additionalHeaders, char* optionalData, LPCWSTR apiUrl, LPCWSTR method) {
+LPSTR SendRequest(LPCWSTR additionalHeaders, char* optionalData, LPCWSTR apiUrl, LPCWSTR method) {
 	DWORD dwSize = 0;
 	DWORD dwDownloaded = 0;
-	LPSTR pszOutBuffer;
+	LPSTR pszOutBuffer = NULL;
 	BOOL  bResults = FALSE;
 	HINTERNET  hSession = NULL,
 		hConnect = NULL,
@@ -101,5 +101,5 @@ DWORD SendRequest(LPCWSTR additionalHeaders, char* optionalData, LPCWSTR apiUrl,
 	if (hConnect) WinHttpCloseHandle(hConnect);
 	if (hSession) WinHttpCloseHandle(hSession);
 
-	return 0;
+	return pszOutBuffer;
 }
