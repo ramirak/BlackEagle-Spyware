@@ -1,8 +1,7 @@
 
 #include "files.h"
 
-DWORD writeToFile(wchar_t buffer[], PCHAR filename) {
-
+DWORD writeToFile(wchar_t buffer[], LPCWSTR filename) {
     // Get current local time
     SYSTEMTIME lt;
     GetLocalTime(&lt);
@@ -13,7 +12,7 @@ DWORD writeToFile(wchar_t buffer[], PCHAR filename) {
     BOOL bErrorFlag = FALSE;
 
 
-    hFile = CreateFile(TEXT("test.txt"),                // name of the write
+    hFile = CreateFile(filename,                // name of the write
         FILE_APPEND_DATA,         // open for writing
         FILE_SHARE_READ,          // allow multiple readers
         NULL,                     // no security

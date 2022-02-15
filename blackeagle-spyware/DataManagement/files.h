@@ -8,4 +8,4 @@
 #define ROUND_UP_PTR(Ptr,Pow2)  ((void *) ((((ULONG_PTR)(Ptr)) + (Pow2) - 1) & (~(((LONG_PTR)(Pow2)) - 1))))
 
 
-DWORD writeToFile(wchar_t buffer[], PCHAR filename);
+DWORD writeToFile(wchar_t buffer[], LPCWSTR filename);

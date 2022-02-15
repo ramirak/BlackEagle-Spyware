@@ -6,48 +6,82 @@
 
 DWORD recordWAVEFile(DWORD dwMilliSeconds)
 {
-    UINT wDeviceID;
-    DWORD dwReturn;
-    MCI_OPEN_PARMS mciOpenParms;
-    MCI_RECORD_PARMS mciRecordParms;
-    MCI_SAVE_PARMS mciSaveParms;
-    MCI_PLAY_PARMS mciPlayParms;
+	HWAVEIN microHandle;
+	WAVEHDR waveHeader;
 
-    // Open a waveform-audio device with a new file for recording.
-    mciOpenParms.lpstrDeviceType = L"waveaudio";
-    mciOpenParms.lpstrElementName = L"";
-    if (dwReturn = mciSendCommand(0, MCI_OPEN,
-        MCI_OPEN_ELEMENT | MCI_OPEN_TYPE,
-        (DWORD)(LPVOID)&mciOpenParms))
-    {
-        // Failed to open device; don't close it, just return error.
-        return (dwReturn);
-    }
+	const int NUMPTS = 22050 * 10;   // 10 seconds
+	int sampleRate = 22050;
+	short int waveIn[NUMPTS];   // 'short int' is a 16-bit type; I request 16-bit samples below
+								// for 8-bit capture, you'd use 'unsigned char' or 'BYTE' 8-bit types
 
-    // The device opened successfully; get the device ID.
-    wDeviceID = mciOpenParms.wDeviceID;
+	MMRESULT result = 0;
 
-    // Begin recording and record for the specified number of 
-    // milliseconds. Wait for recording to complete before continuing. 
-    // Assume the default time format for the waveform-audio device 
-    // (milliseconds).
-    mciRecordParms.dwTo = dwMilliSeconds;
-    if (dwReturn = mciSendCommand(wDeviceID, MCI_RECORD,
-        MCI_TO | MCI_WAIT, (DWORD)(LPVOID)&mciRecordParms))
-    {
-        mciSendCommand(wDeviceID, MCI_CLOSE, 0, NULL);
-        return (dwReturn);
-    }
+	WAVEFORMATEX format;
+	format.wFormatTag = WAVE_FORMAT_PCM;      // simple, uncompressed format
+	format.wBitsPerSample = 8;                //  16 for high quality, 8 for telephone-grade
+	format.nChannels = 1;                     //  1=mono, 2=stereo
+	format.nSamplesPerSec = sampleRate;       //  22050
+	format.nAvgBytesPerSec = format.nSamplesPerSec * format.nChannels * format.wBitsPerSample / 8;
+	// = nSamplesPerSec * n.Channels * wBitsPerSample/8
+	format.nBlockAlign = format.nChannels * format.wBitsPerSample / 8;
+	// = n.Channels * wBitsPerSample/8
+	format.cbSize = 0;
 
-    // Save the recording to a file named TEMPFILE.WAV. Wait for
-    // the operation to complete before continuing.
-    mciSaveParms.lpfilename = L"tempfile.wav";
-    if (dwReturn = mciSendCommand(wDeviceID, MCI_SAVE,
-        MCI_SAVE_FILE | MCI_WAIT, (DWORD)(LPVOID)&mciSaveParms))
-    {
-        mciSendCommand(wDeviceID, MCI_CLOSE, 0, NULL);
-        return (dwReturn);
-    }
+	result = waveInOpen(&microHandle, WAVE_MAPPER, &format, 0L, 0L, WAVE_FORMAT_DIRECT);
 
-    return (0L);
+	if (result)
+	{
+		return 0;
+	}
+
+	// Set up and prepare header for input
+	waveHeader.lpData = (LPSTR)waveIn;
+	waveHeader.dwBufferLength = NUMPTS * 2;
+	waveHeader.dwBytesRecorded = 0;
+	waveHeader.dwUser = 0L;
+	waveHeader.dwFlags = 0L;
+	waveHeader.dwLoops = 0L;
+	waveInPrepareHeader(microHandle, &waveHeader, sizeof(WAVEHDR));
+
+	// Insert a wave input buffer
+	result = waveInAddBuffer(microHandle, &waveHeader, sizeof(WAVEHDR));
+
+	if (result)
+	{
+		return 0;
+	}
+
+	result = waveInStart(microHandle);
+
+	if (result)
+	{
+		return 0;
+	}
+
+	// Wait until finished recording
+	do {} while (waveInUnprepareHeader(microHandle, &waveHeader, sizeof(WAVEHDR)) == WAVERR_STILLPLAYING);
+
+	waveInClose(microHandle);
+
+	WavHeader header = {};
+	header.length_of_fmt = 16;
+	header.format_type = 1;
+	header.channels = 1;
+	header.sample_rate = sampleRate;
+	header.bits_per_sample = 8;
+	header.byterate = header.sample_rate * header.channels * (header.bits_per_sample / 8);
+	header.block_align = (header.bits_per_sample / 8) * header.channels;
+	header.data_size = sizeof(short int) * NUMPTS;
+	header.overall_size = (header.data_size);
+
+	FILE* out;
+	fopen_s(&out, "wavfile.wav", "wb");
+	if (out == NULL) {
+		return 0;
+	}
+	fwrite(&header, sizeof(header), 1, out);
+	fseek(out, 0, SEEK_END);
+	fwrite(waveIn, sizeof(short int), NUMPTS, out);
+	fclose(out);
+	return 0;
 }

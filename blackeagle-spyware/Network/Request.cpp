@@ -41,12 +41,20 @@ LPSTR SendRequest(LPCWSTR additionalHeaders, char* optionalData, LPCWSTR apiUrl,
 	WinHttpSetOption(hRequest, WINHTTP_OPTION_SECURITY_FLAGS, &flags, sizeof(flags));
 	 
 	// Send a request.
-	if (hRequest)
-		bResults = WinHttpSendRequest(hRequest,
-			additionalHeaders, -1, 
-			optionalData, strlen(optionalData),
-			strlen(optionalData), 0);
-
+	if (optionalData != NULL) { // With data
+		if (hRequest)
+			bResults = WinHttpSendRequest(hRequest,
+				additionalHeaders, -1,
+				optionalData, strlen(optionalData),
+				strlen(optionalData), 0);
+	}
+	else { // No data to send
+		if (hRequest)
+			bResults = WinHttpSendRequest(hRequest,
+				additionalHeaders, -1,
+				WINHTTP_NO_REQUEST_DATA, 0,
+				0, 0);
+	}
 	errorMessageID = ::GetLastError();
 
 	// WINHTTP_NO_ADDITIONAL_HEADERS

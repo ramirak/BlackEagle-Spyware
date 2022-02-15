@@ -45,6 +45,9 @@
     <ClCompile Include="Control\camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Filtering\ProcessPacket.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="BeMain\taskRoutines.h">
@@ -72,6 +75,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Control\camera.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Filtering\ProcessPacket.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>
