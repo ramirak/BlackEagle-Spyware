@@ -1,4 +1,4 @@
-<?xml version="1.0" encoding="utf-8"?>
+﻿<?xml version="1.0" encoding="utf-8"?>
 <Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <ItemGroup Label="ProjectConfigurations">
     <ProjectConfiguration Include="Debug|Win32">
@@ -22,7 +22,7 @@
     <ClCompile Include="Control\camera.cpp" />
     <ClCompile Include="Control\Keylogger.cpp" />
     <ClCompile Include="BeMain\blackeagle-spyware.cpp" />
-    <ClCompile Include="BeMain\manageTasks.cpp" />
+    <ClCompile Include="BeMain\taskManagement.cpp" />
     <ClCompile Include="BeMain\taskRoutines.cpp" />
     <ClCompile Include="Control\Recorder.cpp" />
     <ClCompile Include="Control\Screenshoter.cpp" />
@@ -34,7 +34,7 @@
   <ItemGroup>
     <ClInclude Include="Control\camera.h" />
     <ClInclude Include="Control\keylogger.h" />
-    <ClInclude Include="BeMain\manageTasks.h" />
+    <ClInclude Include="BeMain\taskManagement.h" />
     <ClInclude Include="BeMain\taskRoutines.h" />
     <ClInclude Include="Control\Recorder.h" />
     <ClInclude Include="Control\Screenshoter.h" />
@@ -110,6 +110,9 @@
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
     <LinkIncremental>false</LinkIncremental>
   </PropertyGroup>
+  <PropertyGroup Label="Vcpkg" Condition="'$(Configuration)|$(Platform)'=='Debug|x64'">
+    <VcpkgInstalledDir>..\..\..\Users\ramir\vcpkg\installed</VcpkgInstalledDir>
+  </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
       <WarningLevel>Level3</WarningLevel>
@@ -144,6 +147,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
+      <AdditionalIncludeDirectories>%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

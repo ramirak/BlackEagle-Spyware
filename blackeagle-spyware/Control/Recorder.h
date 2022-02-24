@@ -23,4 +23,4 @@ typedef struct WAV_HEADER {
 } WavHeader;
 
 
-DWORD recordWAVEFile(DWORD dwMilliSeconds);
+DWORD recordAudio(DWORD seconds);

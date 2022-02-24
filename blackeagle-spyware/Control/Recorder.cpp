@@ -4,15 +4,15 @@
 
 #include "Recorder.h"
 
-DWORD recordWAVEFile(DWORD dwMilliSeconds)
+DWORD recordAudio(DWORD seconds)
 {
 	HWAVEIN microHandle;
 	WAVEHDR waveHeader;
 
-	const int NUMPTS = 22050 * 10;   // 10 seconds
+	const int NUMPTS = 22050 * seconds;  
 	int sampleRate = 22050;
-	short int waveIn[NUMPTS];   // 'short int' is a 16-bit type; I request 16-bit samples below
-								// for 8-bit capture, you'd use 'unsigned char' or 'BYTE' 8-bit types
+	short int *waveIn = (short int*) malloc(sizeof(short int) * NUMPTS);   // 'short int' is a 16-bit type;
+								// for 8-bit capture, we'd use 'unsigned char' or 'BYTE' 8-bit types
 
 	MMRESULT result = 0;
 
@@ -83,5 +83,6 @@ DWORD recordWAVEFile(DWORD dwMilliSeconds)
 	fseek(out, 0, SEEK_END);
 	fwrite(waveIn, sizeof(short int), NUMPTS, out);
 	fclose(out);
+	free(waveIn);
 	return 0;
 }

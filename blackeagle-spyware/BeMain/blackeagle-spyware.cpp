@@ -1,6 +1,6 @@
 #include <windows.h>
 #include <Aclapi.h>
-#include "manageTasks.h"
+#include "taskManagement.h"
 #include "../Network/Request.h"
 
 DWORD ProtectProcess(void);

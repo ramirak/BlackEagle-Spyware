@@ -1,4 +1,8 @@
 #pragma once
+#include <stdio.h>
+#include <cstdlib>
+#include <string.h>
+ 
 
 typedef struct {
 	char* email;
@@ -15,5 +19,6 @@ typedef struct {
 
 enum boundaryType { USER, DATA };
 
-void* itemFromJson(char* fileName, enum boundaryType structType);
-char* jsonFromItem(void* generalStruct, enum boundaryType structType);
+void* itemFromJson(const char* fileName, enum boundaryType structType);
+const char* jsonFromItem(void* generalStruct, enum boundaryType structType);
+

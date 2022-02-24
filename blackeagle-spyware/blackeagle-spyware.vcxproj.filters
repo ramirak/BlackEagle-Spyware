@@ -18,7 +18,7 @@
     <ClCompile Include="BeMain\blackeagle-spyware.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BeMain\manageTasks.cpp">
+    <ClCompile Include="BeMain\taskManagement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="BeMain\taskRoutines.cpp">
@@ -53,7 +53,7 @@
     <ClInclude Include="BeMain\taskRoutines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BeMain\manageTasks.h">
+    <ClInclude Include="BeMain\taskManagement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Control\keylogger.h">

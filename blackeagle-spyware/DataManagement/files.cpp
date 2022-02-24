@@ -2,9 +2,6 @@
 #include "files.h"
 
 DWORD writeToFile(wchar_t buffer[], LPCWSTR filename) {
-    // Get current local time
-    SYSTEMTIME lt;
-    GetLocalTime(&lt);
 
     HANDLE hFile;
     DWORD dwBytesToWrite = (DWORD)(wcslen(buffer)) * sizeof(wchar_t);
