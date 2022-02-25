@@ -121,7 +121,7 @@
     </ClInclude>
   </ItemGroup>
   <ItemGroup>
-    <None Include="liron.json" />
+    <None Include="auth.json" />
     <None Include="data.json" />
     <None Include="include\PreventInBuildInstalls.cmake" />
     <None Include="include\PreventInSourceBuilds.cmake" />

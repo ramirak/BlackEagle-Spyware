@@ -5,6 +5,7 @@
 #include <fstream>
 #include <iostream>
 #include <sstream>
+#include <json/reader.h>
 #include <map>
 #include <json/value.h>
 #include <json/json.h>

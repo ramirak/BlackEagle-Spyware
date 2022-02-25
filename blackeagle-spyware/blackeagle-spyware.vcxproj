@@ -60,7 +60,7 @@
     <None Include="data.json" />
     <None Include="include\PreventInBuildInstalls.cmake" />
     <None Include="include\PreventInSourceBuilds.cmake" />
-    <None Include="liron.json" />
+    <None Include="auth.json" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\CMakeLists.txt" />

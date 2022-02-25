@@ -52,3 +52,18 @@ DWORD writeToFile(wchar_t buffer[], LPCWSTR filename) {
     CloseHandle(hFile);
     return 1;
 }
+
+char* fileToString(const char* fileName)
+{
+    char* str;
+    FILE* fp = fopen(fileName, "r");
+    if (fp == NULL)
+        return NULL;
+    fseek(fp, 0, SEEK_END);
+    size_t file_size = ftell(fp);
+    str = (char*)malloc(sizeof(char) * file_size);
+    fseek(fp, 0, SEEK_SET);
+    fread(str, file_size, 1, fp);
+    fclose(fp);
+    return str; 
+}

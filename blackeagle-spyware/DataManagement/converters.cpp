@@ -10,7 +10,6 @@ map<string, std::string> itemFromJson(const char* fileName)
 	ifstream file(fileName);
 	reader.parse(file, ourJson);
 
-
 	std::map<string, string> dataJsonMap;
 	Json::Value::Members names = ourJson.getMemberNames();
 
@@ -43,9 +42,9 @@ std::string jsonFromItem(std::map<std::string, std::string> generalMap, enum bou
 
 	if (structType == USER)
 	{
-		auto it1 = generalMap.find("email");
+		auto it1 = generalMap.find("uid");
 		if (it1 != generalMap.end())
-			root["email"] = it1->second;
+			root["uid"] = it1->second;
 
 		auto it2 = generalMap.find("password");
 		if (it2 != generalMap.end())
