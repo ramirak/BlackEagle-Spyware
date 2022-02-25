@@ -1,24 +1,18 @@
 #pragma once
 #include <stdio.h>
 #include <cstdlib>
-#include <string.h>
- 
-
-typedef struct {
-	char* email;
-	char* password;
-}LoginDetails;
-
-typedef struct {
-	char* dataId;
-	char* dataType;
-	char* createdTimestamp;
-	char* dataAttributes;
-	char* dataAttribute;
-}Data;
+#include <string>
+#include <fstream>
+#include <iostream>
+#include <sstream>
+#include <map>
+#include <json/value.h>
+#include <json/json.h>
 
 enum boundaryType { USER, DATA };
 
-void* itemFromJson(const char* fileName, enum boundaryType structType);
-const char* jsonFromItem(void* generalStruct, enum boundaryType structType);
+std::map<std::string, std::string> itemFromJson(const char* fileName);
+std::string jsonFromItem(std::map<std::string, std::string> generalMap, enum boundaryType structType);
+
+
 

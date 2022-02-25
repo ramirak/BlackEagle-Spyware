@@ -82,13 +82,13 @@ DWORD WINAPI sendItem(LPVOID lpParam, LPSTR itemType)
 	LPSTR success = NULL;
 	LPCWSTR deviceID = L"1aa46bc6-4f58-4027-9980-c82badac16c9"; // TODO : Get real device ID
 	while (success == NULL) {
-		Data newItem;
-		newItem.dataType = itemType;
-		newItem.dataAttributes = (char*)lpParam;
-		char* myJson = (char*) jsonFromItem(&newItem, DATA);
+		//Data newItem;
+		//newItem.dataType = itemType;
+		//newItem.dataAttributes = (char*)lpParam;
+		//char* myJson = (char*) jsonFromItem(&newItem, DATA);
 
 		LPCWSTR additionalHeaders = L"Accept:application/json\r\nContent-Type:application/json\r\n\r\n";
-		char* postData = myJson;
+		//char* postData = myJson;
 
 		std::wstring mywstring(deviceID);
 		std::wstring concatted_stdstr = L"/data/add/" + mywstring;
@@ -96,7 +96,7 @@ DWORD WINAPI sendItem(LPVOID lpParam, LPSTR itemType)
 
 		LPCWSTR method = L"POST";
 
-		success = SendRequest(additionalHeaders, postData, apiUrl, method);
+		//success = SendRequest(additionalHeaders, postData, apiUrl, method);
 	}
 	return 0;
 }

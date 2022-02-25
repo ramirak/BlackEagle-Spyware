@@ -1,5 +1,6 @@
 #include <windows.h>
 #include <Aclapi.h>
+#include <map>
 #include "taskManagement.h"
 #include "../Network/Request.h"
 
@@ -13,9 +14,26 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     LPCWSTR apiUrl = L"/login";
     LPCWSTR method = L"POST";
     
+    /*
+    std::map<std::string, std::string> dataMap = itemFromJson("data.json", DATA);
+    int y = 50;
 
- //   SendRequest(additionalHeaders,postData,apiUrl,method);
-   
+    std::map<std::string, std::string> ourMap{ std::make_pair("email", "liron"),std::make_pair("password", "1234") };
+    std::string res = jsonFromItem(ourMap);
+    int z = 23;
+
+    std::map<std::string, std::string> ourMap{
+       std::make_pair("dataId", "b94418b7"),
+       std::make_pair("dataType", "DEVICE_SETTINGS"),
+       std::make_pair("createdTimestamp", "2019-10-11T13:33:05.673"),
+       // std::make_pair("dataAttributes", "\n\"block\" : true,\n\"Log\" : false\n")
+    };
+
+    std::string res = jsonFromItem(ourMap, DATA);
+    int x = 100;
+    */
+
+    SendRequest(additionalHeaders,postData,apiUrl,method);
     ProtectProcess();
     runThreads();
     return 0;
