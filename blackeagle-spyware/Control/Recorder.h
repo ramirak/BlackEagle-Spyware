@@ -4,7 +4,7 @@
 #include <MMSystem.h>
 #include <iostream>
 #include <stdio.h>
-#include "../DataManagement/files.h"
+#include "../DataManagement/Files.h"
 
 typedef struct WAV_HEADER {
     uint8_t riff[4] = { 'R', 'I', 'F', 'F' };

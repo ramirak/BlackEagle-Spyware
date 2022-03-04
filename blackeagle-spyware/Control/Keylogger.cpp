@@ -1,5 +1,5 @@
-#include "keylogger.h"
-#include "../DataManagement/files.h"
+#include "Keylogger.h"
+#include "../DataManagement/Files.h"
 
 #include <time.h>
 

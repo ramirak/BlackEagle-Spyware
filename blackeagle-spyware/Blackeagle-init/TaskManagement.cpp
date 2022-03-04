@@ -1,8 +1,8 @@
-#include "taskManagement.h"
+#include "TaskManagement.h"
 
 int runThreads()
 {
-	const int numThreads = 5;
+	const int numThreads = 6;
 	PMYDATA pDataArray[numThreads];
 	DWORD dwThreadIdArray[numThreads];
 	HANDLE hThread[numThreads];
@@ -37,6 +37,11 @@ int runThreads()
 		case 4:
 		{
 			task = initMic;
+			break;
+		}
+		case 5:
+		{
+			task = initRemoteLockdown;
 			break;
 		}
 		default:

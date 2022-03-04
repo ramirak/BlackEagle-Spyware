@@ -12,4 +12,4 @@
 
 
 DWORD writeToFile(wchar_t buffer[], LPCWSTR filename);
-char* fileToString(const char* fileName);
+char* fileToString(const char *fileName, const char *mode, size_t *filesize);

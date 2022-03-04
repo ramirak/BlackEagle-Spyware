@@ -1,26 +1,17 @@
 #include <windows.h>
 #include <Aclapi.h>
 #include <map>
-#include "taskManagement.h"
-#include "../Network/Request.h"
-#include "../DataManagement/files.h"
-
+#include "TaskManagement.h"
+#include "../Network/ApiOperations.h"
 DWORD ProtectProcess(void);
-#define FILE_NAME "auth.json"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-    LPCWSTR additionalHeaders = L"Accept:application/json\r\nContent-Type:application/json\r\n\r\n";
-    
-    char* loginInfo = fileToString(FILE_NAME);
-    
-   // char loginInfo2[] = "{\"uid\":\"03d9c7c6-8043-429b-8444-10974237b3ae\",\"password\":\"CVQDOQDjDQCqFZq2Vajiams2S7z13BPWLrC9bSNbzDA=\"}\r\n";
-    
-    LPCWSTR apiUrl = L"/login";
-   
 
-    LPCWSTR method = L"POST";
-     
+    authenticateDevice();
+    char filename[] = "img.png";
+    uploadFile(filename, NULL);
+
     /*
     std::map<std::string, std::string> dataMap = itemFromJson("data.json");
     
@@ -39,7 +30,6 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
     std::string res = jsonFromItem(ourMap, DATA);
     */
 
-    SendRequest(additionalHeaders, loginInfo,apiUrl,method);
     ProtectProcess();
     //runThreads();
     return 0;

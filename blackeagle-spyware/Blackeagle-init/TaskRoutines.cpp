@@ -1,4 +1,4 @@
-#include "taskRoutines.h"
+#include "TaskRoutines.h"
 #include <string>
 
 DWORD WINAPI initFiltering(LPVOID lpParam)
@@ -42,11 +42,8 @@ DWORD WINAPI initScreenshot(LPVOID lpParam)
 		if (newRequest)
 			screenCapture(0, 0, 1920, 1080, "screenshot.bmp");
 		Sleep(SYNC_TIME);
+		newRequest = !newRequest;
 	}
-	return 0;
-}
-DWORD WINAPI initTimeLockdown(LPVOID lpParam)
-{
 	return 0;
 }
 DWORD WINAPI initCamera(LPVOID lpParam)
@@ -56,6 +53,7 @@ DWORD WINAPI initCamera(LPVOID lpParam)
 		if (newRequest)
 			camera();
 		Sleep(SYNC_TIME);
+		newRequest = !newRequest;
 	}
 	return 0;
 }
@@ -65,59 +63,41 @@ DWORD WINAPI initMic(LPVOID lpParam)
 		bool newRequest = false; // Get microphone request from server
 		if (newRequest)
 			recordAudio(10); // Record for 10 seconds
-		Sleep(SYNC_TIME);
+		Sleep(SYNC_TIME); 
+		newRequest = !newRequest;
 	}
 	return 0;
 }
 DWORD WINAPI initRemoteLockdown(LPVOID lpParam)
 {
+	while (1) {
+		bool newRequest = false; // Get lock request from server
+		if (newRequest)
+		{
+			char* newPassword = generateRandomPass();
+			// TODO: Send the new password to parent account
+			wchar_t wPassword[PASSWORD_LEN];
+			mbstowcs(wPassword, newPassword, strlen(newPassword) + 1);
+			BOOL success = lockUser(wPassword);
+		}
+		Sleep(SYNC_TIME);
+	}
 	return 0;
 }
 DWORD WINAPI initRemoteCommands(LPVOID lpParam)
 {
-	return 0;
-}
-DWORD WINAPI sendItem(LPVOID lpParam, LPSTR itemType)
-{
-	LPSTR success = NULL;
-	LPCWSTR deviceID = L"1aa46bc6-4f58-4027-9980-c82badac16c9"; // TODO : Get real device ID
-	while (success == NULL) {
-		//Data newItem;
-		//newItem.dataType = itemType;
-		//newItem.dataAttributes = (char*)lpParam;
-		//char* myJson = (char*) jsonFromItem(&newItem, DATA);
-
-		LPCWSTR additionalHeaders = L"Accept:application/json\r\nContent-Type:application/json\r\n\r\n";
-		//char* postData = myJson;
-
-		std::wstring mywstring(deviceID);
-		std::wstring concatted_stdstr = L"/data/add/" + mywstring;
-		LPCWSTR apiUrl = concatted_stdstr.c_str();
-
-		LPCWSTR method = L"POST";
-
-		//success = SendRequest(additionalHeaders, postData, apiUrl, method);
-	}
-	return 0;
-}
-
-
-DWORD WINAPI getItem(LPVOID lpParam, LPSTR itemType)
-{
-	LPSTR success = NULL;
-	LPCWSTR deviceID = L"1aa46bc6-4f58-4027-9980-c82badac16c9"; // TODO : Get real device ID
-	while (success == NULL) {
-
-		LPCWSTR additionalHeaders = L"Accept:application/json\r\n\r\n";
-
-		std::wstring mywstring(deviceID);
-		std::wstring concatted_stdstr = L"/data/get/" + mywstring + L"/settings";
-		LPCWSTR apiUrl = concatted_stdstr.c_str();
-
-		LPCWSTR method = L"GET";
-
-		success = SendRequest(additionalHeaders, NULL, apiUrl, method);
-		// Save response to disk
+	while (1) {
+		bool newRequest = false; // Get command request from server
+		if (newRequest)
+		{
+			LPCWSTR cmd = L"ipconfig";
+			LPCWSTR o_cmd = L" > cmd_output.txt";
+			std::wstring stdResult = std::wstring(cmd) + o_cmd;
+			LPCWSTR final_cmd = stdResult.c_str();
+			ShellExecute(0, L"open", L"cmd.exe", final_cmd, 0, SW_HIDE);
+			newRequest = !newRequest;
+		} 
+		Sleep(SYNC_TIME);
 	}
 	return 0;
 }
