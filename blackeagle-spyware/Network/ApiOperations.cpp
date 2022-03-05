@@ -33,8 +33,13 @@ LPSTR uploadFile(char* filename, char* json) {
 		.append(json)
 		.append("\r\n----346435246262465368257857--\r\n"); 
 	
-	char* part1 = (char*) malloc(sizeof(char) *(part1str.length() + 1));
+	char* part1 = (char*) malloc(sizeof(char) * (part1str.length() + 1));
+	if (!part1)
+		return NULL;
 	char* part2 = (char*) malloc(sizeof(char) * (part2str.length() + 1));
+	if (!part2)
+		return NULL;
+
 	strcpy(part1, part1str.c_str()); 
 	strcpy(part2, part2str.c_str());
 

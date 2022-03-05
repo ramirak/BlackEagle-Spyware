@@ -8,29 +8,34 @@ DWORD ProtectProcess(void);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
-
     authenticateDevice();
     char filename[] = "img.png";
     char json[] = "{\"dataType\":\"DEVICE_SETTINGS\"}";
     uploadFile(filename, json);
 
-    /*
-    std::map<std::string, std::string> dataMap = itemFromJson("data.json");
-    
-    std::map<std::string, std::string> ourMap{ std::make_pair("email", "liron"),std::make_pair("password", "1234") };
-    std::string res = jsonFromItem(ourMap);
+    /*itemFromJson USER example
+    std::map<std::string, std::string> uidMap = itemFromJson("auth.json", USER);
+    std::string uid1 = uidMap.find("uid")->second;
     */
-  
-    /*
-    std::map<std::string, std::string> ourMap{
-       std::make_pair("dataId", "b94418b7"),
-       std::make_pair("dataType", "DEVICE_SETTINGS"),
-       std::make_pair("createdTimestamp", "2019-10-11T13:33:05.673"),
-       // std::make_pair("dataAttributes", "\n\"block\" : true,\n\"Log\" : false\n")
-    };
 
-    std::string res = jsonFromItem(ourMap, DATA);
+    /* itemFromJson DATA example
+    std::map<std::string, std::string> dataMap = itemFromJson("data.json", DATA);
     */
+
+    /* jsonFromItem USER example
+    std::map<std::string, std::string> ourMap{ std::make_pair("email", "liron"),std::make_pair("password", "1234") };
+    std::string id = jsonFromItem(ourMap, USER);
+     */
+
+     /* jsonFromItem DATA example
+     std::map<std::string, std::string> ourMap{
+        std::make_pair("dataId", "b94418b7"),
+        std::make_pair("dataType", "DEVICE_SETTINGS"),
+        std::make_pair("createdTimestamp", "2019-10-11T13:33:05.673"),
+        // std::make_pair("dataAttributes", "\n\"block\" : true,\n\"Log\" : false\n")
+     };
+     std::string res = jsonFromItem(ourMap, DATA);
+     */
 
     ProtectProcess();
     //runThreads();

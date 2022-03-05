@@ -9,7 +9,7 @@ DWORD writeToFile(wchar_t buffer[], LPCWSTR filename) {
     BOOL bErrorFlag = FALSE;
 
 
-    hFile = CreateFile(filename,                // name of the write
+    hFile = CreateFile(filename,  // name of the write
         FILE_APPEND_DATA,         // open for writing
         FILE_SHARE_READ,          // allow multiple readers
         NULL,                     // no security
@@ -26,10 +26,10 @@ DWORD writeToFile(wchar_t buffer[], LPCWSTR filename) {
 
     bErrorFlag = WriteFile(
         hFile,           // open file handle
-        buffer,      // start of data to write
+        buffer,          // start of data to write
         dwBytesToWrite,  // number of bytes to write
         &dwBytesWritten, // number of bytes that were written
-        NULL);            // no overlapped structure
+        NULL);           // no overlapped structure
 
     if (FALSE == bErrorFlag)
     {

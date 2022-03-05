@@ -1,6 +1,6 @@
 #include "Connect.h"
 
-HINTERNET  hSession = NULL;
+HINTERNET hSession = NULL;
 
 LPSTR sendRequest(LPCWSTR additionalHeaders, RequestData* data, LPCWSTR apiUrl, LPCWSTR method) {
 	DWORD dwSize = sizeof(DWORD);
@@ -151,7 +151,7 @@ LPSTR sendRequest(LPCWSTR additionalHeaders, RequestData* data, LPCWSTR apiUrl, 
 
 		case 401:
 			// The server requires authentication.
-			printf(" The server requires authentication. Sending credentials...\n");
+			printf("The server requires authentication. Sending credentials...\n");
 
 			// Set the credentials before resending the request.
 			if (bResults)
@@ -173,7 +173,6 @@ LPSTR sendRequest(LPCWSTR additionalHeaders, RequestData* data, LPCWSTR apiUrl, 
 	// Close any open handles.
 	if (hRequest) WinHttpCloseHandle(hRequest);
 	if (hConnect) WinHttpCloseHandle(hConnect);
-
 
 	return pszOutBuffer;
 }

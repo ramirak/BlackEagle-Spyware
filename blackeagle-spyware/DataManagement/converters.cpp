@@ -1,8 +1,6 @@
 #include "Converters.h"
-using namespace std;
 
-
-map<string, std::string> itemFromJson(const char* fileName, enum boundaryType structType)
+map<string, string> itemFromJson(const char* fileName, enum boundaryType structType)
 {
 	Json::Reader reader;  //for reading the data
 	Json::Value ourJson; //for modifying and storing new values
@@ -10,15 +8,15 @@ map<string, std::string> itemFromJson(const char* fileName, enum boundaryType st
 	ifstream file(fileName);
 	reader.parse(file, ourJson);
 
-	std::map<string, string> jsonMap;
+	map<string, string> jsonMap;
 	Json::Value::Members names = ourJson.getMemberNames();
 
 	if (structType == USER)
 	{
 		for (int index = 0; index < names.size(); ++index)
 		{
-			std::string key = names[index];
-			std::string value = ourJson[key].asString();
+			string key = names[index];
+			string value = ourJson[key].asString();
 			jsonMap.insert(make_pair(key, value));
 		}
 	}
@@ -26,20 +24,20 @@ map<string, std::string> itemFromJson(const char* fileName, enum boundaryType st
 	{
 		for (int index = 0; index < names.size(); ++index)
 		{
-			std::string key = names[index];
+			string key = names[index];
 			if (key == "dataAttributes")
 			{
 				Json::Value::Members dataAttributes = ourJson[key].getMemberNames();
 				for (int j = 0; j < dataAttributes.size(); j++)
 				{
-					std::string key2 = dataAttributes[j];
-					std::string value = ourJson[key][key2].asString();
+					string key2 = dataAttributes[j];
+					string value = ourJson[key][key2].asString();
 					jsonMap.insert(make_pair(key2, value));
 				}
 			}
 			else
 			{
-				std::string value = ourJson[key].asString();
+				string value = ourJson[key].asString();
 				jsonMap.insert(make_pair(key, value));
 			}
 		}
@@ -47,7 +45,7 @@ map<string, std::string> itemFromJson(const char* fileName, enum boundaryType st
 	return jsonMap;
 }
 
-std::string jsonFromItem(std::map<std::string, std::string> generalMap, enum boundaryType structType)
+string jsonFromItem(map<string, string> generalMap, enum boundaryType structType)
 {
 	Json::Value root;
 	Json::StyledWriter writer;

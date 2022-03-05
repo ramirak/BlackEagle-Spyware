@@ -18,7 +18,7 @@ enum class RequestType {
 
 typedef struct {
 	RequestType type;
-	char* part1,* part2;
+	char* part1, *part2;
 	char* filename;
 } RequestData;
 

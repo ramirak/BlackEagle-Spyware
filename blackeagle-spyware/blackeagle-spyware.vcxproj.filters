@@ -134,17 +134,10 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="auth.json" />
-    <None Include="data.json" />
     <None Include="include\PreventInBuildInstalls.cmake" />
     <None Include="include\PreventInSourceBuilds.cmake" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\CMakeLists.txt" />
-    <Text Include="kl.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="img.png">
-      <Filter>Resource Files</Filter>
-    </Image>
   </ItemGroup>
 </Project>

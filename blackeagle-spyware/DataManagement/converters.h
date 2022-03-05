@@ -11,9 +11,10 @@
 #include <json/json.h>
 
 enum boundaryType { USER, DATA };
+using namespace std;
 
-std::map<std::string, std::string> itemFromJson(const char* fileName, enum boundaryType structType);
-std::string jsonFromItem(std::map<std::string, std::string> generalMap, enum boundaryType structType);
+map<string, string> itemFromJson(const char* fileName, enum boundaryType structType);
+string jsonFromItem(map<string, string> generalMap, enum boundaryType structType);
 
 
 

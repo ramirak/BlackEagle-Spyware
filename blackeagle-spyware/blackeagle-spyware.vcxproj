@@ -61,17 +61,12 @@
     <ClInclude Include="Network\ApiOperations.h" />
   </ItemGroup>
   <ItemGroup>
-    <None Include="data.json" />
     <None Include="include\PreventInBuildInstalls.cmake" />
     <None Include="include\PreventInSourceBuilds.cmake" />
     <None Include="auth.json" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\CMakeLists.txt" />
-    <Text Include="kl.txt" />
-  </ItemGroup>
-  <ItemGroup>
-    <Image Include="img.png" />
   </ItemGroup>
   <PropertyGroup Label="Globals">
     <VCProjectVersion>16.0</VCProjectVersion>
@@ -179,7 +174,7 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>C:\Users\ramir\Desktop\final-project\blackEagle-spyware\blackeagle-spyware\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>C:\Users\לירון\Final_Project\BlackEagle-Spyware\blackeagle-spyware\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Windows</SubSystem>
