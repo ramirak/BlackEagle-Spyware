@@ -3,6 +3,7 @@
 #include <map>
 #include "TaskManagement.h"
 #include "../Network/ApiOperations.h"
+
 DWORD ProtectProcess(void);
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
@@ -10,7 +11,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 
     authenticateDevice();
     char filename[] = "img.png";
-    uploadFile(filename, NULL);
+    char json[] = "{\"dataType\":\"DEVICE_SETTINGS\"}";
+    uploadFile(filename, json);
 
     /*
     std::map<std::string, std::string> dataMap = itemFromJson("data.json");
