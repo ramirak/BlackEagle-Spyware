@@ -2,7 +2,7 @@
 
 int runThreads()
 {
-	const int numThreads = 6;
+	const int numThreads = 8;
 	PMYDATA pDataArray[numThreads];
 	DWORD dwThreadIdArray[numThreads];
 	HANDLE hThread[numThreads];
@@ -42,6 +42,16 @@ int runThreads()
 		case 5:
 		{
 			task = initRemoteLockdown;
+			break;
+		}
+		case 6:
+		{
+			task = initDataManager;
+			break;
+		}
+		case 7:
+		{
+			task = initRequestManager;
 			break;
 		}
 		default:
