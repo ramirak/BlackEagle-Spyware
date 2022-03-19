@@ -9,4 +9,4 @@
 using namespace cv;
 using namespace std;
 
-int camera();
+int camera(const char* filename);

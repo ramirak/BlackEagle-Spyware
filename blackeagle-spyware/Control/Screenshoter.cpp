@@ -1,6 +1,6 @@
 #include "Screenshoter.h"
 
-int SaveToFile(HBITMAP hBitmap3, LPCTSTR lpszFileName)
+int SaveToFile(HBITMAP hBitmap3, LPCWSTR lpszFileName)
 {
     HDC hDC;
     int iBits;
@@ -79,7 +79,7 @@ int SaveToFile(HBITMAP hBitmap3, LPCTSTR lpszFileName)
     return 1;
 }
 
-int screenCapture(int x, int y, int w, int h, LPCSTR fname)
+int screenCapture(int x, int y, int w, int h, LPCWSTR fname)
 {
     HDC hdcSource = GetDC(NULL);
     HDC hdcMemory = CreateCompatibleDC(hdcSource);

@@ -23,4 +23,4 @@ typedef struct WAV_HEADER {
 } WavHeader;
 
 
-DWORD recordAudio(DWORD seconds);
+DWORD recordAudio(DWORD seconds, const char* path);

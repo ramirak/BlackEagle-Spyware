@@ -4,10 +4,13 @@
 #include <string>
 #include "Connect.h"
 #include "Connect.h"
-#include "../DataManagement/Files.h"
 #include <sstream>
 #include <string>
+#include "../DataManagement/Files.h"
+#include "../DataManagement/converters.h"
+ResponseData authenticateDevice();
+ResponseData downloadFile();
+ResponseData uploadFile(char* filename, char* json);
+wstring getUID();
 
-LPSTR authenticateDevice();
-LPSTR uploadFile(char* filename, char* json);
-
+using namespace std;

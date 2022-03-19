@@ -1,12 +1,35 @@
 #include "Converters.h"
 
-map<string, string> itemFromJson(const char* fileName, enum boundaryType structType)
+map<string, map<string, string>> itemsListFromJson(LPSTR pszOutBuffer) {
+	Json::Reader reader;  //for reading the data
+	Json::Value ourJson; //for modifying and storing new values
+	std::string stdstr = pszOutBuffer;
+	reader.parse(stdstr, ourJson);
+	Json::FastWriter fastWriter;
+
+	map<string, map<string, string>> jsonMap;
+	for (int i = 0; i < ourJson.size(); i++)
+	{
+		Json::Value currentJson = ourJson[i];
+		std::string currentJsonStr = fastWriter.write(currentJson);
+		map<string, string> currentMap = itemFromJson(TRUE, currentJsonStr.c_str(), DATA);
+
+		jsonMap.insert(make_pair(currentMap.find("REQUEST_TYPE")->second, currentMap));
+	}
+	return jsonMap;
+}
+
+map<string, string> itemFromJson(BOOL isJson, const char* buffer, enum boundaryType structType)
 {
 	Json::Reader reader;  //for reading the data
 	Json::Value ourJson; //for modifying and storing new values
 
-	ifstream file(fileName);
-	reader.parse(file, ourJson);
+	if (!isJson) {
+		ifstream file(buffer);
+		reader.parse(file, ourJson);
+	}
+	else
+		reader.parse(buffer, ourJson);
 
 	map<string, string> jsonMap;
 	Json::Value::Members names = ourJson.getMemberNames();

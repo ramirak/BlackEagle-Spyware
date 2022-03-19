@@ -17,10 +17,15 @@ enum class RequestType {
 };
 
 typedef struct {
+	DWORD dwStatusCode;
+	LPSTR response;
+} ResponseData;
+
+typedef struct {
 	RequestType type;
 	char* part1, *part2;
 	char* filename;
 } RequestData;
 
-LPSTR sendRequest(LPCWSTR additionalHeaders, RequestData* data, LPCWSTR apiUrl, LPCWSTR method);
+ResponseData sendRequest(LPCWSTR additionalHeaders, RequestData* data, LPCWSTR apiUrl, LPCWSTR method);
 BOOL closeSessionHandle();

@@ -9,11 +9,12 @@
 #include <map>
 #include <json/value.h>
 #include <json/json.h>
-
+#include <Windows.h>
 enum boundaryType { USER, DATA };
 using namespace std;
 
-map<string, string> itemFromJson(const char* fileName, enum boundaryType structType);
+map<string, map<string, string>> itemsListFromJson(LPSTR pszOutBuffer);
+map<string, string> itemFromJson(BOOL isJson, const char* buffer, enum boundaryType structType);
 string jsonFromItem(map<string, string> generalMap, enum boundaryType structType);
 
 

@@ -1,8 +1,8 @@
 #include "Connect.h"
 
-HINTERNET hSession = NULL;
+HINTERNET  hSession = NULL;
 
-LPSTR sendRequest(LPCWSTR additionalHeaders, RequestData* data, LPCWSTR apiUrl, LPCWSTR method) {
+ResponseData sendRequest(LPCWSTR additionalHeaders, RequestData* data, LPCWSTR apiUrl, LPCWSTR method) {
 	DWORD dwSize = sizeof(DWORD);
 	DWORD dwDownloaded = 0;
 	LPSTR pszOutBuffer = NULL;
@@ -115,43 +115,39 @@ LPSTR sendRequest(LPCWSTR additionalHeaders, RequestData* data, LPCWSTR apiUrl, 
 			// contents of the server's response.
 
 			// Keep checking for data until there is nothing left.
-			do
+
+			if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
+				printf("Error %u in WinHttpQueryDataAvailable.\n",
+					GetLastError());
+
+			// Allocate space for the buffer.
+			pszOutBuffer = new char[dwSize + 1];
+			if (!pszOutBuffer)
 			{
-				// Check for available data.
+				printf("Out of memory\n");
 				dwSize = 0;
-				if (!WinHttpQueryDataAvailable(hRequest, &dwSize))
-					printf("Error %u in WinHttpQueryDataAvailable.\n",
-						GetLastError());
+			}
+			else
+			{
+				// Read the data.
+				ZeroMemory(pszOutBuffer, dwSize + 1);
 
-				// Allocate space for the buffer.
-				pszOutBuffer = new char[dwSize + 1];
-				if (!pszOutBuffer)
-				{
-					printf("Out of memory\n");
-					dwSize = 0;
-				}
+				if (!WinHttpReadData(hRequest, (LPVOID)pszOutBuffer,
+					dwSize, &dwDownloaded))
+					printf("Error %u in WinHttpReadData.\n", GetLastError());
 				else
-				{
-					// Read the data.
-					ZeroMemory(pszOutBuffer, dwSize + 1);
+					printf("%s", pszOutBuffer);
 
-					if (!WinHttpReadData(hRequest, (LPVOID)pszOutBuffer,
-						dwSize, &dwDownloaded))
-						printf("Error %u in WinHttpReadData.\n", GetLastError());
-					else
-						printf("%s", pszOutBuffer);
-
-					// Free the memory allocated to the buffer.
-					delete[] pszOutBuffer;
-				}
-			} while (dwSize > 0);
+				// Free the memory allocated to the buffer.
+				//delete[] pszOutBuffer;
+			}
 
 			printf("The resource was successfully retrieved.\n");
 			break;
 
 		case 401:
 			// The server requires authentication.
-			printf("The server requires authentication. Sending credentials...\n");
+			printf(" The server requires authentication. Sending credentials...\n");
 
 			// Set the credentials before resending the request.
 			if (bResults)
@@ -174,7 +170,10 @@ LPSTR sendRequest(LPCWSTR additionalHeaders, RequestData* data, LPCWSTR apiUrl, 
 	if (hRequest) WinHttpCloseHandle(hRequest);
 	if (hConnect) WinHttpCloseHandle(hConnect);
 
-	return pszOutBuffer;
+	ResponseData rd;
+	rd.dwStatusCode = dwStatusCode;
+	rd.response = pszOutBuffer;
+	return rd;
 }
 
 BOOL closeSessionHandle() {
