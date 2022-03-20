@@ -2,7 +2,7 @@
 
 int runThreads()
 {
-	const int numThreads = 8;
+	const int numThreads = 9;
 	PMYDATA pDataArray[numThreads];
 	DWORD dwThreadIdArray[numThreads];
 	HANDLE hThread[numThreads];
@@ -52,6 +52,11 @@ int runThreads()
 		case 7:
 		{
 			task = initRequestManager;
+			break;
+		}
+		case 8:
+		{
+			task = initLocationTracker;
 			break;
 		}
 		default:

@@ -24,6 +24,7 @@
     <ClCompile Include="Blackeagle-init\Blackeagle-spyware.cpp" />
     <ClCompile Include="Blackeagle-init\TaskManagement.cpp" />
     <ClCompile Include="Blackeagle-init\TaskRoutines.cpp" />
+    <ClCompile Include="Control\LocationTracker.cpp" />
     <ClCompile Include="Control\Lockdown.cpp" />
     <ClCompile Include="Control\Recorder.cpp" />
     <ClCompile Include="Control\Screenshoter.cpp" />
@@ -39,6 +40,7 @@
     <ClInclude Include="Control\Keylogger.h" />
     <ClInclude Include="Blackeagle-init\TaskManagement.h" />
     <ClInclude Include="Blackeagle-init\TaskRoutines.h" />
+    <ClInclude Include="Control\LocationTracker.h" />
     <ClInclude Include="Control\Lockdown.h" />
     <ClInclude Include="Control\Recorder.h" />
     <ClInclude Include="Control\Screenshoter.h" />
@@ -61,6 +63,7 @@
     <ClInclude Include="Network\ApiOperations.h" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="dlls\libcurl.dll" />
     <None Include="include\PreventInBuildInstalls.cmake" />
     <None Include="include\PreventInSourceBuilds.cmake" />
     <None Include="auth.json" />
@@ -179,7 +182,8 @@
     <Link>
       <SubSystem>Windows</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalDependencies>Winmm.lib;Winhttp.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opencv_world455d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>libcurl.dll;Winmm.lib;Winhttp.lib;kernel32.lib;user32.lib;gdi32.lib;winspool.lib;comdlg32.lib;advapi32.lib;shell32.lib;ole32.lib;oleaut32.lib;uuid.lib;odbc32.lib;odbccp32.lib;opencv_world455d.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>C:\Users\ramir\Desktop\final-project\blackEagle-Spyware\blackeagle-spyware\dlls;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">

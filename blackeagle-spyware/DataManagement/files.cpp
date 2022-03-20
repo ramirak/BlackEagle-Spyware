@@ -1,4 +1,3 @@
-
 #include "files.h"
 
 DWORD writeToFile(wchar_t buffer[], LPCWSTR filename) {
@@ -7,7 +6,6 @@ DWORD writeToFile(wchar_t buffer[], LPCWSTR filename) {
     DWORD dwBytesToWrite = (DWORD)(wcslen(buffer)) * sizeof(wchar_t);
     DWORD dwBytesWritten = 0;
     BOOL bErrorFlag = FALSE;
-
 
     hFile = CreateFile(filename,  // name of the write
         FILE_APPEND_DATA,         // open for writing

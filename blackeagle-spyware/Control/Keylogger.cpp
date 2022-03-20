@@ -1,7 +1,4 @@
 #include "Keylogger.h"
-#include "../DataManagement/Files.h"
-
-#include <time.h>
 
 time_t start, end;
 #define NEW_FILE_NUM_SECONDS 3600 

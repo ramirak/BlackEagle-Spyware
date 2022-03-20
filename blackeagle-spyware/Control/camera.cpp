@@ -1,5 +1,4 @@
 #include "camera.h"
-#include "iostream"
 
 int camera(const char* filename)
 {

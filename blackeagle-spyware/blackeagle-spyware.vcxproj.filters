@@ -57,6 +57,9 @@
     <ClCompile Include="Network\ApiOperations.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Control\LocationTracker.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Blackeagle-init\TaskRoutines.h">
@@ -131,11 +134,15 @@
     <ClInclude Include="Network\ApiOperations.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="Control\LocationTracker.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <None Include="auth.json" />
     <None Include="include\PreventInBuildInstalls.cmake" />
     <None Include="include\PreventInSourceBuilds.cmake" />
+    <None Include="dlls\libcurl.dll" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\CMakeLists.txt" />

