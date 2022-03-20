@@ -41,9 +41,6 @@ char* generateRandomPass()
     if (!newPass)
         return NULL;
 
-    /* Seed number for rand() */
-    srand((unsigned int)time(0));
-
     /*
     // With special chars
     if()

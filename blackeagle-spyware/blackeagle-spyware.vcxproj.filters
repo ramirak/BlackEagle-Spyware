@@ -142,7 +142,7 @@
     <None Include="auth.json" />
     <None Include="include\PreventInBuildInstalls.cmake" />
     <None Include="include\PreventInSourceBuilds.cmake" />
-    <None Include="dlls\libcurl.dll" />
+    <None Include="dlls\libcurl-x64.dll" />
   </ItemGroup>
   <ItemGroup>
     <Text Include="include\CMakeLists.txt" />

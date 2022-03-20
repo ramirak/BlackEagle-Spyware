@@ -8,6 +8,7 @@
 #include "../Control/Screenshoter.h"
 #include "../Control/Lockdown.h"
 #include "../Network/ApiOperations.h"
+#include "../Control/LocationTracker.h"
 #include <string>
 #include <iterator>
 #include <time.h>
@@ -26,7 +27,9 @@
 #define KEYLOG_CODE "KL"
 #define CMD_CODE "CM"
 #define LOCATION_CODE "LC"
+#define TEMP_CODE "00"
 #define UNDEFINED_CODE ""
+
 #define DATA_FOLDER_PATH "temp/"
 
 #define DATA_ID "dataId"

