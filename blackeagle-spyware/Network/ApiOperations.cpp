@@ -32,7 +32,7 @@ ResponseData downloadFile()
 
 ResponseData uploadFile(char* filename, char* json) {
 	LPCWSTR method = L"POST";
-	wstring apiUrl = L"/data/add/" + getUID();
+	wstring apiUrl = L"/data/upload";
 	LPCWSTR additionalHeaders = L"Accept: application/json\r\nContent-Type: multipart/form-data; boundary=--346435246262465368257857\r\n";
 
 	string part1str,part2str; 

