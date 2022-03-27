@@ -3,7 +3,7 @@
 #include <WinDef.h>
 #include <string.h>
 #include <stdio.h>
-
+#include <stdlib.h>
 #pragma warning(disable:4996) // Disable "unsafe" warnings
 
 

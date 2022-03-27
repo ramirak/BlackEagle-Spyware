@@ -1,6 +1,5 @@
 #include "ApiOperations.h"
 
-#define AUTH_FILE_NAME "auth.json"
 
 wstring getUID() {
 	string uid = itemFromJson(FALSE, AUTH_FILE_NAME, USER).find("uid")->second;
@@ -20,11 +19,23 @@ ResponseData authenticateDevice() {
 	return sendRequest(additionalHeaders, &rd, apiUrl, method);
 }
 
-ResponseData downloadFile()
+ResponseData downloadFile(DownloadType dt)
 {
 	LPCWSTR additionalHeaders = L"Accept:application/json\r\n\r\n";
-	wstring apiUrl = L"/data/getAll/" + getUID() + L"/REQUEST";
 	LPCWSTR method = L"GET";
+	wstring apiUrl;
+
+	switch (dt)
+	{
+	case CONFIGS:
+		apiUrl = L"/data/getAll/" + getUID() + L"/CONFIG";
+		break;
+	case REQUESTS:
+		apiUrl = L"/data/getAll/" + getUID() + L"/REQUEST";
+		break;
+	default:
+		break;
+	}
 	RequestData rd;
 	rd.type = RequestType::WO_DATA;
 	return sendRequest(additionalHeaders, &rd, apiUrl.c_str(), method);
@@ -40,8 +51,8 @@ ResponseData uploadFile(char* filename, char* json) {
 		"----346435246262465368257857\r\n"
 		"Content-Disposition: form-data; name=\"file\"; filename=\"")
 		.append(filename)
-		.append("\"\r\nContent-Type: image/png\r\n\r\n");
-
+		.append("\"\r\nContent-Type: application/octet-stream\r\n\r\n");
+	//text/plain
 	part2str.append(
 		"\r\n----346435246262465368257857\r\n"
 		"Content-Disposition: form-data; name=\"newData\"\r\n"

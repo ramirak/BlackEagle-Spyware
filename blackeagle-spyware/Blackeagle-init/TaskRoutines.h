@@ -5,16 +5,19 @@
 #include "../Control/Camera.h"
 #include "../DataManagement/Converters.h"
 #include "../Network/Connect.h"
-#include "../Control/Snitch.h"
 #include "../Control/Screenshoter.h"
 #include "../Control/Lockdown.h"
 #include "../Network/ApiOperations.h"
 #include "../Control/LocationTracker.h"
+#include "../Control/Filter.h"
+
 #include <string>
 #include <iterator>
 #include <time.h>
 #include <shellapi.h>
 #include <queue>
+#include <codecvt>
+#include <locale>
 
 #define Camera "CAMERA"
 #define Keylog "KEYLOG"
@@ -61,4 +64,5 @@ BOOL initRequest(map<string, map<string, string>> allRequests, const char* reque
 string checkDataType(char* filename);
 string constructFilename(const char* typeCode);
 wstring stringToWString(string str);
+string wStringToString(wstring wStr);
 string getRandomString(const int len);

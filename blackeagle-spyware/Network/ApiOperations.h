@@ -8,8 +8,15 @@
 #include "../DataManagement/Files.h"
 #include "../DataManagement/converters.h"
 ResponseData authenticateDevice();
-ResponseData downloadFile();
 ResponseData uploadFile(char* filename, char* json);
 wstring getUID();
+
+#define AUTH_FILE_NAME "auth.json"
+
+enum DownloadType {
+	CONFIGS,
+	REQUESTS
+};
+ResponseData downloadFile(DownloadType dt);
 
 using namespace std;

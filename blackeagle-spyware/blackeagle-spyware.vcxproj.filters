@@ -57,7 +57,7 @@
     <ClCompile Include="Control\LocationTracker.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Control\Snitch.cpp">
+    <ClCompile Include="Control\Filter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
   </ItemGroup>
@@ -134,7 +134,7 @@
     <ClInclude Include="Control\LocationTracker.h">
       <Filter>Header Files</Filter>
     </ClInclude>
-    <ClInclude Include="Control\Snitch.h">
+    <ClInclude Include="Control\Filter.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Blackeagle-init\Blackeagle-spyware.h">

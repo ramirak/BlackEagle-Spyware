@@ -14,20 +14,24 @@ ResponseData sendRequest(LPCWSTR additionalHeaders, RequestData* data, LPCWSTR a
 	DWORD dwFirstScheme;
 	DWORD dwLastStatus = 0;
 	BOOL  bDone = FALSE;
+	DWORD errorMessageID;
 
 	// Use WinHttpOpen to obtain a session handle.
-	if (!hSession)
+	if (!hSession) {
 		hSession = WinHttpOpen(L"Blackeagle-Service",
 			WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
 			WINHTTP_NO_PROXY_NAME,
-			WINHTTP_NO_PROXY_BYPASS, 0);
+			WINHTTP_NO_PROXY_BYPASS, 0); 
 
-	// Specify an HTTP server. 
+		if (!WinHttpSetTimeouts(hSession, 0, 0, 0, 0))
+			errorMessageID = ::GetLastError();
+	}
+	// Specify an HTTP server.   
 	if (hSession)
 		hConnect = WinHttpConnect(hSession, HOST,
 			PORT_NUM, 0);
 
-	DWORD errorMessageID = ::GetLastError();
+	errorMessageID = ::GetLastError();
 
 	// Create an HTTP request handle.
 	if (hConnect)
@@ -44,7 +48,6 @@ ResponseData sendRequest(LPCWSTR additionalHeaders, RequestData* data, LPCWSTR a
 		SECURITY_FLAG_IGNORE_CERT_WRONG_USAGE;
 
 	WinHttpSetOption(hRequest, WINHTTP_OPTION_SECURITY_FLAGS, &flags, sizeof(flags));
-
 
 	DWORD logonPolicy = WINHTTP_AUTOLOGON_SECURITY_LEVEL_LOW;
 	BOOL fRet = WinHttpSetOption(hRequest,

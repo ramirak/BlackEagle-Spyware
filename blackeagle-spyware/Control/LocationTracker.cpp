@@ -20,6 +20,9 @@ int getLocation(LPCWSTR filename) {
         curl_easy_cleanup(curl);
 
         wstring readBufferW = wstring(readBuffer.begin(), readBuffer.end());
+
+        const wchar_t* str = readBufferW.c_str();
+
         writeToFile((wchar_t*)readBufferW.c_str(), filename);
     }
     return 0;

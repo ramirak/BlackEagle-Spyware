@@ -9,7 +9,7 @@ DWORD writeToFile(wchar_t buffer[], LPCWSTR filename) {
 
     hFile = CreateFile(filename,  // name of the write
         FILE_APPEND_DATA,         // open for writing
-        FILE_SHARE_READ,          // allow multiple readers
+        0,                        // prevent other p from reading 
         NULL,                     // no security
         OPEN_ALWAYS,              // open or create
         FILE_ATTRIBUTE_NORMAL,    // normal file
@@ -36,8 +36,11 @@ DWORD writeToFile(wchar_t buffer[], LPCWSTR filename) {
     }
     else
     {
+        DWORD err = GetLastError();
+        int a = 1;
         if (dwBytesWritten != dwBytesToWrite)
         {
+            
             // This is an error because a synchronous write that results in
             // success (WriteFile returns TRUE) should write all data as
             // requested. This would not necessarily be the case for

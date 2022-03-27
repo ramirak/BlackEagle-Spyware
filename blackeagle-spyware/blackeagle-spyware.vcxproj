@@ -28,7 +28,7 @@
     <ClCompile Include="Control\Lockdown.cpp" />
     <ClCompile Include="Control\Recorder.cpp" />
     <ClCompile Include="Control\Screenshoter.cpp" />
-    <ClCompile Include="Control\Snitch.cpp" />
+    <ClCompile Include="Control\Filter.cpp" />
     <ClCompile Include="DataManagement\Converters.cpp" />
     <ClCompile Include="DataManagement\Files.cpp" />
     <ClCompile Include="dist\jsoncpp.cpp" />
@@ -45,7 +45,7 @@
     <ClInclude Include="Control\Lockdown.h" />
     <ClInclude Include="Control\Recorder.h" />
     <ClInclude Include="Control\Screenshoter.h" />
-    <ClInclude Include="Control\Snitch.h" />
+    <ClInclude Include="Control\Filter.h" />
     <ClInclude Include="DataManagement\Converters.h" />
     <ClInclude Include="DataManagement\Files.h" />
     <ClInclude Include="dist\json\json-forwards.h" />
