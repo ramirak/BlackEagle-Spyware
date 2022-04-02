@@ -116,3 +116,13 @@ string jsonFromItem(map<string, string> generalMap, enum boundaryType structType
 	}
 	return "";
 }
+
+wstring stringToWString(string str) {
+	return wstring(str.begin(), str.end());
+}
+
+string wStringToString(wstring wstr) {
+	using convert_typeX = std::codecvt_utf8<wchar_t>;
+	std::wstring_convert<convert_typeX, wchar_t> converterX;
+	return converterX.to_bytes(wstr);
+}

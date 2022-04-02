@@ -1,103 +1,65 @@
 #include "Screenshoter.h"
 
-int SaveToFile(HBITMAP hBitmap3, LPCWSTR lpszFileName)
+int screenCapture(LPCWSTR fname)
 {
-    HDC hDC;
-    int iBits;
-    WORD wBitCount;
-    DWORD dwPaletteSize = 0, dwBmBitsSize = 0, dwDIBSize = 0, dwWritten = 0;
-    BITMAP Bitmap0;
-    BITMAPFILEHEADER bmfHdr;
-    BITMAPINFOHEADER bi;
-    LPBITMAPINFOHEADER lpbi;
-    HANDLE fh, hDib, hPal, hOldPal2 = NULL;
-    hDC = CreateDC((LPCWSTR)"DISPLAY", NULL, NULL, NULL);
-    iBits = GetDeviceCaps(hDC, BITSPIXEL) * GetDeviceCaps(hDC, PLANES);
-    DeleteDC(hDC);
-    if (iBits <= 1)
-        wBitCount = 1;
-    else if (iBits <= 4)
-        wBitCount = 4;
-    else if (iBits <= 8)
-        wBitCount = 8;
-    else
-        wBitCount = 24;
-    GetObject(hBitmap3, sizeof(Bitmap0), (LPSTR)&Bitmap0);
-    bi.biSize = sizeof(BITMAPINFOHEADER);
-    bi.biWidth = Bitmap0.bmWidth;
-    bi.biHeight = -Bitmap0.bmHeight;
-    bi.biPlanes = 1;
-    bi.biBitCount = wBitCount;
-    bi.biCompression = BI_RGB;
-    bi.biSizeImage = 0;
-    bi.biXPelsPerMeter = 0;
-    bi.biYPelsPerMeter = 0;
-    bi.biClrImportant = 0;
-    bi.biClrUsed = 256;
-    dwBmBitsSize = ((Bitmap0.bmWidth * wBitCount + 31) & ~31) / 8 * Bitmap0.bmHeight;
-    hDib = GlobalAlloc(GHND, dwBmBitsSize + dwPaletteSize + sizeof(BITMAPINFOHEADER));
-    lpbi = (LPBITMAPINFOHEADER)GlobalLock(hDib);
-    *lpbi = bi;
+    BITMAPFILEHEADER bfHeader;
+    BITMAPINFOHEADER biHeader;
+    BITMAPINFO bInfo;
+    HGDIOBJ hTempBitmap;
+    HBITMAP hBitmap;
+    BITMAP bAllDesktops;
+    HDC hDC, hMemDC;
+    LONG lWidth, lHeight;
+    BYTE* bBits = NULL;
+    HANDLE hHeap = GetProcessHeap();
+    DWORD cbBits, dwWritten = 0;
+    HANDLE hFile;
+    INT x = GetSystemMetrics(SM_XVIRTUALSCREEN);
+    INT y = GetSystemMetrics(SM_YVIRTUALSCREEN);
 
-    hPal = GetStockObject(DEFAULT_PALETTE);
-    if (hPal)
-    {
-        hDC = GetDC(NULL);
-        hOldPal2 = SelectPalette(hDC, (HPALETTE)hPal, 0);
-        RealizePalette(hDC);
-    }
+    ZeroMemory(&bfHeader, sizeof(BITMAPFILEHEADER));
+    ZeroMemory(&biHeader, sizeof(BITMAPINFOHEADER));
+    ZeroMemory(&bInfo, sizeof(BITMAPINFO));
+    ZeroMemory(&bAllDesktops, sizeof(BITMAP));
 
-    GetDIBits(hDC, hBitmap3, 0, (UINT)Bitmap0.bmHeight, (LPSTR)lpbi + sizeof(BITMAPINFOHEADER) + dwPaletteSize, (BITMAPINFO*)lpbi, DIB_RGB_COLORS);
+    hDC = GetDC(NULL);
+    hTempBitmap = GetCurrentObject(hDC, OBJ_BITMAP);
+    GetObjectW(hTempBitmap, sizeof(BITMAP), &bAllDesktops);
 
-    if (hOldPal2)
-    {
-        SelectPalette(hDC, (HPALETTE)hOldPal2, 1);
-        RealizePalette(hDC);
-        ReleaseDC(NULL, hDC);
-    }
+    lWidth = bAllDesktops.bmWidth;
+    lHeight = bAllDesktops.bmHeight;
 
-    fh = CreateFile(lpszFileName, GENERIC_WRITE, 0, NULL, CREATE_ALWAYS,
-        FILE_ATTRIBUTE_NORMAL | FILE_FLAG_SEQUENTIAL_SCAN, NULL);
+    DeleteObject(hTempBitmap);
 
-    if (fh == INVALID_HANDLE_VALUE)
-        return 0;
+    bfHeader.bfType = (WORD)('B' | ('M' << 8));
+    bfHeader.bfOffBits = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER);
+    biHeader.biSize = sizeof(BITMAPINFOHEADER);
+    biHeader.biBitCount = 24;
+    biHeader.biCompression = BI_RGB;
+    biHeader.biPlanes = 1;
+    biHeader.biWidth = lWidth;
+    biHeader.biHeight = lHeight;
 
-    bmfHdr.bfType = 0x4D42; // "BM"
-    dwDIBSize = sizeof(BITMAPFILEHEADER) + sizeof(BITMAPINFOHEADER) + dwPaletteSize + dwBmBitsSize;
-    bmfHdr.bfSize = dwDIBSize;
-    bmfHdr.bfReserved1 = 0;
-    bmfHdr.bfReserved2 = 0;
-    bmfHdr.bfOffBits = (DWORD)sizeof(BITMAPFILEHEADER) + (DWORD)sizeof(BITMAPINFOHEADER) + dwPaletteSize;
+    bInfo.bmiHeader = biHeader;
 
-    WriteFile(fh, (LPSTR)&bmfHdr, sizeof(BITMAPFILEHEADER), &dwWritten, NULL);
+    cbBits = (((24 * lWidth + 31) & ~31) / 8) * lHeight;
 
-    WriteFile(fh, (LPSTR)lpbi, dwDIBSize, &dwWritten, NULL);
-    GlobalUnlock(hDib);
-    GlobalFree(hDib);
-    CloseHandle(fh);
+    hMemDC = CreateCompatibleDC(hDC);
+    hBitmap = CreateDIBSection(hDC, &bInfo, DIB_RGB_COLORS, (VOID**)&bBits, NULL, 0);
+    SelectObject(hMemDC, hBitmap);
+    BitBlt(hMemDC, 0, 0, lWidth, lHeight, hDC, x, y, SRCCOPY);
+
+
+    hFile = CreateFileW(fname, GENERIC_WRITE | GENERIC_READ, 0, NULL, CREATE_ALWAYS, FILE_ATTRIBUTE_NORMAL, NULL);
+    WriteFile(hFile, &bfHeader, sizeof(BITMAPFILEHEADER), &dwWritten, NULL);
+    WriteFile(hFile, &biHeader, sizeof(BITMAPINFOHEADER), &dwWritten, NULL);
+    WriteFile(hFile, bBits, cbBits, &dwWritten, NULL);
+
+    CloseHandle(hFile);
+
+    DeleteDC(hMemDC);
+    ReleaseDC(NULL, hDC);
+    DeleteObject(hBitmap);
 
     return 1;
-}
-
-int screenCapture(int x, int y, int w, int h, LPCWSTR fname)
-{
-    HDC hdcSource = GetDC(NULL);
-    HDC hdcMemory = CreateCompatibleDC(hdcSource);
-
-    int capX = GetDeviceCaps(hdcSource, HORZRES);
-    int capY = GetDeviceCaps(hdcSource, VERTRES);
-
-    HBITMAP hBitmap = CreateCompatibleBitmap(hdcSource, w, h);
-    HBITMAP hBitmapOld = (HBITMAP)SelectObject(hdcMemory, hBitmap);
-
-    BitBlt(hdcMemory, 0, 0, w, h, hdcSource, x, y, SRCCOPY);
-    hBitmap = (HBITMAP)SelectObject(hdcMemory, hBitmapOld);
-
-    DeleteDC(hdcSource);
-    DeleteDC(hdcMemory);
-
-    HPALETTE hpal = NULL;
-    if (SaveToFile(hBitmap,(LPCWSTR) fname))
-        return 1;
-    return 0;
 }

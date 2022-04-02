@@ -16,27 +16,6 @@
 #include <time.h>
 #include <shellapi.h>
 #include <queue>
-#include <codecvt>
-#include <locale>
-
-#define Camera "CAMERA"
-#define Keylog "KEYLOG"
-#define Audio "AUDIO"
-#define Screenshot "SCREENSHOT"
-#define Lockdown "LOCKDOWN"
-#define Command "COMMAND"
-#define Location "LOCATION"
-
-#define CAMERA_CODE "CA"
-#define AUDIO_CODE "AU"
-#define SCREENSHOT_CODE "SC"
-#define KEYLOG_CODE "KL"
-#define CMD_CODE "CM"
-#define LOCATION_CODE "LC"
-#define TEMP_CODE "00"
-#define UNDEFINED_CODE ""
-
-#define DATA_FOLDER_PATH "temp/"
 
 #define DATA_TYPE "dataType"
 
@@ -61,8 +40,3 @@ DWORD WINAPI initDataManager(LPVOID lpParam);
 DWORD WINAPI initRequestManager(LPVOID lpParam);
 
 BOOL initRequest(map<string, map<string, string>> allRequests, const char* requestName, HANDLE requestHandle);
-string checkDataType(char* filename);
-string constructFilename(const char* typeCode);
-wstring stringToWString(string str);
-string wStringToString(wstring wStr);
-string getRandomString(const int len);
