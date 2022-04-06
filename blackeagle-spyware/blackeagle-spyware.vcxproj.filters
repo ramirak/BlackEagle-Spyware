@@ -66,6 +66,9 @@
     <ClCompile Include="Blackeagle-init\TasksHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="Control\Commander.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Blackeagle-init\TaskRoutines.h">
@@ -150,6 +153,9 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Blackeagle-init\TasksHelper.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="Control\Commander.h">
       <Filter>Header Files</Filter>
     </ClInclude>
   </ItemGroup>

@@ -21,6 +21,7 @@
   <ItemGroup>
     <ClCompile Include="Blackeagle-init\TasksHelper.cpp" />
     <ClCompile Include="Control\Camera.cpp" />
+    <ClCompile Include="Control\Commander.cpp" />
     <ClCompile Include="Control\Keylogger.cpp" />
     <ClCompile Include="Blackeagle-init\Blackeagle-spyware.cpp" />
     <ClCompile Include="Blackeagle-init\TaskManagement.cpp" />
@@ -41,6 +42,7 @@
     <ClInclude Include="Blackeagle-init\Blackeagle-spyware.h" />
     <ClInclude Include="Blackeagle-init\TasksHelper.h" />
     <ClInclude Include="Control\Camera.h" />
+    <ClInclude Include="Control\Commander.h" />
     <ClInclude Include="Control\Keylogger.h" />
     <ClInclude Include="Blackeagle-init\TaskManagement.h" />
     <ClInclude Include="Blackeagle-init\TaskRoutines.h" />

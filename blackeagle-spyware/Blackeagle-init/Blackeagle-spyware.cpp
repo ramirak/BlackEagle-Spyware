@@ -2,6 +2,11 @@
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
 {
+
+	CreateMutexA(0, FALSE, "Local\\$blackeagle$"); // Try to create a named mutex
+	if (GetLastError() == ERROR_ALREADY_EXISTS) // Does the mutex already exist?
+		return -1; // quit; mutex is released automatically
+
 	srand((unsigned)time(NULL) * getpid());
 //	ProtectProcess();
 

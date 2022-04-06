@@ -10,6 +10,7 @@
 #include "../Network/ApiOperations.h"
 #include "../Control/LocationTracker.h"
 #include "../Control/Filter.h"
+#include "../Control/Commander.h"
 
 #include <string>
 #include <iterator>
