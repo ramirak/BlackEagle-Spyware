@@ -7,7 +7,10 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	if (GetLastError() == ERROR_ALREADY_EXISTS) // Does the mutex already exist?
 		return -1; // quit; mutex is released automatically
 
-	srand((unsigned)time(NULL) * getpid());
+
+	//srand((unsigned)time(NULL) * getpid());
+	//srand(time(NULL));
+
 //	ProtectProcess();
 
   

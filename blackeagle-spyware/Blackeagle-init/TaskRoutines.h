@@ -17,6 +17,7 @@
 #include <time.h>
 #include <shellapi.h>
 #include <queue>
+#include <cwctype>
 
 #define DATA_TYPE "dataType"
 

@@ -27,8 +27,8 @@ ResponseData downloadFile(DownloadType dt)
 
 	switch (dt)
 	{
-	case CONFIGS:
-		apiUrl = L"/data/getAll/" + getUID() + L"/CONFIG";
+	case CONFIGURATION:
+		apiUrl = L"/data/get/" + getUID() + L"/CONFIGURATION" + L"@" + getUID();
 		break;
 	case REQUESTS:
 		apiUrl = L"/data/getAll/" + getUID() + L"/REQUEST";

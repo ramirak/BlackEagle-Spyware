@@ -2,7 +2,10 @@
 
 #include <Windows.h>
 #include <string>
+#include <map>
 #include "../DataManagement/converters.h"
+#pragma comment(lib, "rpcrt4.lib")
+#include <rpc.h>
 
 #define DATA_FOLDER_PATH "temp/"
 
@@ -27,7 +30,7 @@
 
 using namespace std;
 
-DWORD buildFilterPath(wstring finalFilterPath, map<string, string> configs, map<string, string>::iterator configsIter, const char* type);
+wstring buildFilterPath(wstring finalFilterPath, map<string, string> configs, const char* type);
 string checkDataType(char* filename);
 string constructFilename(const char* typeCode);
 string getRandomString(const int len);

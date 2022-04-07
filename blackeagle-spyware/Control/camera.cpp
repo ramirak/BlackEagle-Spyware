@@ -15,7 +15,7 @@ int camera(const char* filename)
 	// capture the next frame from the webcam
 	camera >> frame;
 
-	if (!frame.data)
+	//if (!frame.data)
 		imwrite(filename, frame);
 
 	return 0;

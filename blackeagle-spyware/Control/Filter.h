@@ -3,12 +3,12 @@
 #include <windows.h>
 #include <string>
 
-#define DEFAULT_FILTER_PATH L"/filters/"
+#define DEFAULT_FILTER_PATH L"filters/"
 
-#define FAKENEWS "fakenews"
-#define GAMBLING "gambling"
-#define PORN "porn"
-#define SOCIAL "social"
-#define ADDITIONAL_SITES "additional_sites"
+#define FAKENEWS "FAKENEWS"
+#define GAMBLING "GAMBLING"
+#define PORN "PORN"
+#define SOCIAL "SOCIAL"
+#define ADDITIONAL_SITES "ADDITIONAL_SITES"
 
 DWORD setFilters(LPCWSTR FilterType, LPCWSTR AdditionalBlockedSites);

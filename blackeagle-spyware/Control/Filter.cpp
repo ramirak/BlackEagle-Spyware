@@ -7,19 +7,22 @@ DWORD setFilters(LPCWSTR FilterType, LPCWSTR AdditionalBlockedSites)
 	DWORD dBytesWritten;
 	DWORD error;
 
-	std::wstring path = L"%WinDir%/System32/Drivers/Etc/";
-	std::wstring pathWithFile = path + L"hosts";
+	std::wstring path = L"C:\\Windows\\System32\\drivers\\etc";
+	std::wstring pathWithFile = path + L"\\hosts";
 	
 	// Delete old hostfile
-	if (!DeleteFile(pathWithFile.c_str()))
-		return 0;
+	if (!DeleteFile(pathWithFile.c_str())) {
+		error = GetLastError();
+		if(error == 3)
+ 			return 0;
+	}
 
 	std::wstring pathW(DEFAULT_FILTER_PATH);
-	std::wstring fullPathW = pathW + L"/" + FilterType + L"/hosts";
+	std::wstring fullPathW = pathW + FilterType + L"/hosts";
 	LPCWSTR fullPathFinal = fullPathW.c_str();
 
 	// Replace the old file with the chosen filtered one 
-	if (!CopyFile(fullPathFinal, path.c_str(), FALSE)) {
+	if (!CopyFile(fullPathFinal, pathWithFile.c_str(), FALSE)) {
 		error = GetLastError();
 		return 0;
 	}

@@ -1,15 +1,14 @@
 #include "TasksHelper.h"
 
-DWORD buildFilterPath(wstring finalFilterPath, map<string, string> configs, map<string, string>::iterator configsIter, const char* type) {
-	if (configsIter != configs.end()) {
-		if (configsIter->second == "true")
-			finalFilterPath.append(stringToWString(type));
+wstring buildFilterPath(wstring finalFilterPath, map<string, string> configs, const char* type) {
+	if (configs.find(type) != configs.end()) {
+		if (configs.find(type)->second == "true")
+			finalFilterPath.append(stringToWString(type).append(L"-"));
 	}
 	else
-		return 0; // invalid config file
-	return 1;
+		return L"*"; // invalid config file
+	return finalFilterPath;
 }
-
 
 string checkDataType(char* filename)
 {
@@ -29,19 +28,6 @@ string checkDataType(char* filename)
 		return Location;
 	return UNDEFINED_CODE;
 }
-string getRandomString(const int len) {
-	const char alphanum[] =
-		"0123456789"
-		"ABCDEFGHIJKLMNOPQRSTUVWXYZ"
-		"abcdefghijklmnopqrstuvwxyz";
-	string tmp_s;
-	tmp_s.reserve(len);
-
-	for (int i = 0; i < len; ++i) {
-		tmp_s += alphanum[rand() % (sizeof(alphanum) - 1)];
-	}
-	return tmp_s;
-}
 
 string constructFilename(const char* typeCode) {
 	// Get time and date
@@ -54,6 +40,11 @@ string constructFilename(const char* typeCode) {
 	// Get the date as a string
 	strftime(dateString, sizeof(dateString), "-%d-%m-%Y-%H-%M-%S-", timeinfo);
 	string fname = "";
-	fname.append(DATA_FOLDER_PATH).append(typeCode).append(dateString).append(getRandomString(10));
+	UUID uuid;
+	UuidCreate(&uuid);
+	char* str;
+	UuidToStringA(&uuid, (RPC_CSTR*)&str);
+	fname.append(DATA_FOLDER_PATH).append(typeCode).append(dateString).append(str);
+	RpcStringFreeA((RPC_CSTR*)&str);
 	return fname;
 }
