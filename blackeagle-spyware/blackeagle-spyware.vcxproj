@@ -19,6 +19,7 @@
     </ProjectConfiguration>
   </ItemGroup>
   <ItemGroup>
+    <ClCompile Include="Blackeagle-init\MakePersist.cpp" />
     <ClCompile Include="Blackeagle-init\TasksHelper.cpp" />
     <ClCompile Include="Control\Camera.cpp" />
     <ClCompile Include="Control\Commander.cpp" />
@@ -39,7 +40,7 @@
     <ClCompile Include="Network\ApiOperations.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="Blackeagle-init\Blackeagle-spyware.h" />
+    <ClInclude Include="Blackeagle-init\MakePersist.h" />
     <ClInclude Include="Blackeagle-init\TasksHelper.h" />
     <ClInclude Include="Control\Camera.h" />
     <ClInclude Include="Control\Commander.h" />

@@ -17,6 +17,9 @@
 #define Command "COMMAND"
 #define Location "LOCATION"
 
+#define Command_Type "COMMAND_TYPE"
+#define Command_Param "COMMAND_PARAMETER"
+
 #define CAMERA_CODE "CA"
 #define AUDIO_CODE "AU"
 #define SCREENSHOT_CODE "SC"

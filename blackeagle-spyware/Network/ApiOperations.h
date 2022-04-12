@@ -7,9 +7,6 @@
 #include <string>
 #include "../DataManagement/Files.h"
 #include "../DataManagement/converters.h"
-ResponseData authenticateDevice();
-ResponseData uploadFile(char* filename, char* json);
-wstring getUID();
 
 #define AUTH_FILE_NAME "auth.json"
 
@@ -17,6 +14,10 @@ enum DownloadType {
 	CONFIGURATION,
 	REQUESTS
 };
+
+ResponseData authenticateDevice();
+ResponseData uploadFile(char* filename, char* json);
 ResponseData downloadFile(DownloadType dt);
+wstring getUID();
 
 using namespace std;
