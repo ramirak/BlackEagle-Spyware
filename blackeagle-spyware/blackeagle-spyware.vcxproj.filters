@@ -60,9 +60,6 @@
     <ClCompile Include="Control\Filter.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
-    <ClCompile Include="Control\Snitch.cpp">
-      <Filter>Source Files</Filter>
-    </ClCompile>
     <ClCompile Include="Blackeagle-init\TasksHelper.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
@@ -147,9 +144,6 @@
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Control\Filter.h">
-      <Filter>Header Files</Filter>
-    </ClInclude>
-    <ClInclude Include="Control\Snitch.h">
       <Filter>Header Files</Filter>
     </ClInclude>
     <ClInclude Include="Blackeagle-init\TasksHelper.h">

@@ -16,6 +16,8 @@ string checkDataType(char* filename)
 
 	if (!strcmp(id, KEYLOG_CODE))
 		return Keylog;
+	else if (!strcmp(id, NETLOG_CODE))
+		return Netlog;
 	else if (!strcmp(id, CAMERA_CODE))
 		return Camera;
 	else if (!strcmp(id, AUDIO_CODE))

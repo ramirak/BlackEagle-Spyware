@@ -11,6 +11,7 @@
 
 #define Camera "CAMERA"
 #define Keylog "KEYLOG"
+#define Netlog "NETLOG"
 #define Audio "AUDIO"
 #define Screenshot "SCREENSHOT"
 #define Lockdown "LOCKDOWN"
@@ -24,6 +25,7 @@
 #define AUDIO_CODE "AU"
 #define SCREENSHOT_CODE "SC"
 #define KEYLOG_CODE "KL"
+#define NETLOG_CODE "NL"
 #define CMD_CODE "CM"
 #define LOCATION_CODE "LC"
 #define TEMP_CODE "00"

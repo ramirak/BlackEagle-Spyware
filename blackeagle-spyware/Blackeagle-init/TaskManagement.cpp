@@ -2,7 +2,7 @@
 
 int runThreads()
 {
-	const int numThreads = 10;
+	const int numThreads = 11;
 	PMYDATA pDataArray[numThreads];
 	DWORD dwThreadIdArray[numThreads];
 	HANDLE hThread[numThreads];
@@ -62,6 +62,11 @@ int runThreads()
 		case 9:
 		{
 			task = initLocationTracker;
+			break;
+		}
+		case 10:
+		{
+			task = initNetLogger;
 			break;
 		}
 		default:
