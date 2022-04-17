@@ -9,9 +9,11 @@ int runThreads()
 
 	for (int i = 0; i < numThreads; i++)
 	{
+		// Allocate additional data for the threads.. 
+		// [Not used at the moment]
 		pDataArray[i] = (PMYDATA)HeapAlloc(GetProcessHeap(), HEAP_ZERO_MEMORY, sizeof(MYDATA));
 		LPTHREAD_START_ROUTINE task = {};
-
+		// Set a task for each thread in a loop
 		switch (i)
 		{
 		case 0:
@@ -77,7 +79,7 @@ int runThreads()
 		default:
 			break;
 		}
-
+		// Create a thread for each task according to the current case..
 		hThread[i] = CreateThread(NULL, 0, task, pDataArray[i], 0, &dwThreadIdArray[i]);
 
 		if (hThread[i] == NULL)
