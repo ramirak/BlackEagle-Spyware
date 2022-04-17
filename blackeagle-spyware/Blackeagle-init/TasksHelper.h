@@ -17,6 +17,7 @@
 #define Lockdown "LOCKDOWN"
 #define Command "COMMAND"
 #define Location "LOCATION"
+#define DataGrab "DATA_GRAB"
 
 #define Command_Type "COMMAND_TYPE"
 #define Command_Param "COMMAND_PARAMETER"
@@ -28,6 +29,7 @@
 #define NETLOG_CODE "NL"
 #define CMD_CODE "CM"
 #define LOCATION_CODE "LC"
+#define DATA_GRAB_CODE "DG"
 #define TEMP_CODE "00"
 #define UNDEFINED_CODE ""
 

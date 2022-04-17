@@ -1,7 +1,7 @@
 function Retrieve-ServerCertFromSocket ($hostname, $port=443, $SNIHeader, [switch]$FailWithoutTrust)
 {
 	$hostname=$hostname.split(':')[0]
-	
+
     if (!$SNIHeader) {
         $SNIHeader = $hostname
     }

