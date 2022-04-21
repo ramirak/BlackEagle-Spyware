@@ -37,6 +37,10 @@
 
 using namespace std;
 
+#define BLACKEAGLE_MSG "\n\n###############################################\n# BlackEagle - Spy & control : custom filters\n###############################################\n"
+
+
+string removeCharsFromString(string str, const char* charsToRemove);
 wstring buildFilterPath(wstring finalFilterPath, map<string, string> configs, const char* type);
 string checkDataType(char* filename);
 string constructFilename(const char* typeCode);

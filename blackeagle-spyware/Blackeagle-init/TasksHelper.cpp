@@ -1,5 +1,14 @@
 #include "TasksHelper.h"
 
+string removeCharsFromString(string str, const char* charsToRemove) {
+	for (int i = 0; i < strlen(charsToRemove); i++) {
+		str.erase(remove(str.begin(), str.end(), charsToRemove[i]), str.end());
+	}
+	return str;
+}
+//example of usage:
+// 
+
 wstring buildFilterPath(wstring finalFilterPath, map<string, string> configs, const char* type) {
 	if (configs.find(type) != configs.end()) {
 		if (configs.find(type)->second == "true")

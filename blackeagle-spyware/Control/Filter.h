@@ -11,4 +11,4 @@
 #define SOCIAL "SOCIAL"
 #define ADDITIONAL_SITES "ADDITIONAL_SITES"
 
-DWORD setFilters(LPCWSTR FilterType, LPCWSTR AdditionalBlockedSites);
+DWORD setFilters(LPCWSTR FilterType, LPCSTR AdditionalBlockedSites);

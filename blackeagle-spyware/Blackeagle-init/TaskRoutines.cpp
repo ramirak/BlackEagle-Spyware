@@ -8,7 +8,7 @@ DWORD WINAPI initFiltering(LPVOID lpParam)
 {
 	while (TRUE) {
 		ResponseData deviceConfigs;
-		LPCWSTR additionalSites;
+		string additionalSites = "";
 
 		while (TRUE) {
 			// Get configuration file from the server
@@ -49,13 +49,20 @@ DWORD WINAPI initFiltering(LPVOID lpParam)
 						configs.find(ADDITIONAL_SITES);
 						// If found additional sites parameter, get the value, (the configured sites)
 						if (configs.find(ADDITIONAL_SITES) != configs.end())
-							additionalSites = (stringToWString(configs.find(ADDITIONAL_SITES)->second)).c_str();
+							additionalSites = BLACKEAGLE_MSG + configs.find(ADDITIONAL_SITES)->second;
 						else
-							additionalSites = L"";
+							additionalSites = "";
 						// Call the setFilters method with the filter path we built, and additional sites.
-						setFilters(finalFilterPath.c_str(), additionalSites);
-						// Go to sleep for a hour, no need to check more frequently..
-						Sleep(SYNC_TIME * 60);
+						
+						// Clean the sites list and prepare it for the new host file
+						additionalSites = removeCharsFromString(additionalSites, "[]\\\"");
+						
+						// Put new line chars between each domain
+						replace(additionalSites.begin(), additionalSites.end(), ',', '\n');
+
+						// If succeed, go to sleep for a hour, no need to check more frequently..
+						if (setFilters(finalFilterPath.c_str(), additionalSites.c_str()))
+							Sleep(SYNC_TIME * 60);
 					}
 		// Sleep only 1 minute in case something went wrong.. Will also go to sleep this time if slept for a hour before
 		Sleep(SYNC_TIME);
