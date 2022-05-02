@@ -30,6 +30,7 @@ struct CompareDates {
 
 #pragma warning(disable:4996) // Disable "unsafe" warnings
 #define SYNC_TIME 60000 // 1 minute
+#define NETLOG_SIZE 5
 
 DWORD WINAPI initFiltering(LPVOID lpParam);
 DWORD WINAPI initNetLogger(LPVOID lpParam);
