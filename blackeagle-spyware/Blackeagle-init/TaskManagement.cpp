@@ -18,7 +18,7 @@ int runThreads()
 		{
 		case 0:
 		{
-			task = initFiltering;
+			task = initConfig;
 			break;
 		}
 		case 1:

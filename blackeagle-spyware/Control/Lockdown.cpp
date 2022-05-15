@@ -26,8 +26,8 @@ BOOL lockUser(LPWSTR password) {
         NULL);
 
     // Display the result of the call.
-    if (nStatus == NERR_Success)
-        return TRUE;
+    if (nStatus != NERR_Success)
+        return FALSE;
 
     if (!LockWorkStation())
         return TRUE;

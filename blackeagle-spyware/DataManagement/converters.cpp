@@ -98,19 +98,7 @@ string jsonFromItem(map<string, string> generalMap, enum boundaryType structType
 		auto it3 = generalMap.find("createdTimestamp");
 		if (it3 != generalMap.end())
 			root["createdTimestamp"] = it3->second;
-		/*
-			auto it4 = generalMap.find("dataAttributes");
-			if (it4 != generalMap.end())
-			{
-				auto it5 = generalMap.find("Block");
-				if (it5 != generalMap.end())
-					root["dataAttributes"] = it5->second;
 
-				auto it6 = generalMap.find("Log");
-				if (it6 != generalMap.end())
-					root["dataAttributes"] = it6->second;
-			}
-		*/
 		Json::StyledWriter writer;
 		return writer.write(root);
 	}

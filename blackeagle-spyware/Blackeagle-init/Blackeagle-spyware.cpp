@@ -4,10 +4,7 @@
 #include "MakePersist.h"
 
 int WINAPI WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance, LPSTR lpCmdLine, int nCmdShow)
-{
-	// Initial seed for random methods
-	srand((unsigned)time(NULL) * getpid());
-	
+{	
 	// Prerequisite and persistence methods -- Registry updates are disabled for future inspections --
 	install(FALSE);
 

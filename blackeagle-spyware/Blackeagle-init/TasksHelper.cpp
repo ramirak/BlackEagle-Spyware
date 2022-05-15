@@ -6,8 +6,6 @@ string removeCharsFromString(string str, const char* charsToRemove) {
 	}
 	return str;
 }
-//example of usage:
-// 
 
 wstring buildFilterPath(wstring finalFilterPath, map<string, string> configs, const char* type) {
 	if (configs.find(type) != configs.end()) {
@@ -37,6 +35,8 @@ string checkDataType(char* filename)
 		return Command;
 	else if (!strcmp(id, LOCATION_CODE))
 		return Location;
+	else if (!strcmp(id, PASS_LOCK_CODE))
+		return Lockdown;
 	return UNDEFINED_CODE;
 }
 
