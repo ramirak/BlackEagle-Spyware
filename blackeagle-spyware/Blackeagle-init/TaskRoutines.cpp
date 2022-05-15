@@ -19,8 +19,10 @@ DWORD WINAPI initConfig(LPVOID lpParam)
 			// Get configuration file from the server
 			deviceConfigs = downloadFile(CONFIGURATION);
 			// Try again in SYNC_TIME if failed to get the file..
-			if (deviceConfigs.dwStatusCode != 200 || deviceConfigs.response == "[]")
+			if (deviceConfigs.dwStatusCode != 200 || deviceConfigs.response == "[]") {
+				active = FALSE;
 				Sleep(SYNC_TIME);
+			}
 			else
 				break;
 		}
